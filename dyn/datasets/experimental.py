@@ -428,13 +428,13 @@ def load_mutated_retinal_cells(
         List of the mutations given to each cell .
     """
     cells = (
-        open("dyn/datasets/mutated_retinal_cells/cells.txt", "r").read().split("\n\n")
+        open(os.path.join(os.getcwd(), "dyn/datasets/mutated_retinal_cells/cells.txt"), "r").read().split("\n\n")
     )
     surfaces = (
-        open("dyn/datasets/mutated_retinal_cells/surfaces.txt", "r").read().split("\n")
+        open(os.path.join(os.getcwd(), "dyn/datasets/mutated_retinal_cells/surfaces.txt"), "r").read().split("\n")
     )
     mutations = (
-        open("dyn/datasets/mutated_retinal_cells/mutations.txt", "r").read().split("\n")
+        open(os.path.join(os.getcwd(), "dyn/datasets/mutated_retinal_cells/mutations.txt"), "r").read().split("\n")
     )
 
     cells = cells[:-1]  # the last line is blank, and cannot be removed
