@@ -7,3 +7,5 @@ The following three notebooks consists of the implementation for three tasks for
 - ./dyn/notebooks/explore_histogram.ipynb: Histogram of distances to the mean
 
 - ./dyn/notebooks/dimension_reduction.ipynb: Dimensionality reduction
+
+Also, ./dyn/manuscript/GSI_2023_SI.pdf contains supplementary figures to our main manuscript, showing results of our study on the DLM8 cell line and additional results for the DUNN cell line.
