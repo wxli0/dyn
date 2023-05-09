@@ -1,4 +1,4 @@
-This repo is clone from https://github.com/bioshape-lab/dyn. Please check their README file for environment setup.
+This repo is cloned from https://github.com/bioshape-lab/dyn. Please check their README file for environment setup.
 
 The following three notebooks consists of the implementation for three tasks for DUNN/DLM8 cell lines.
 
