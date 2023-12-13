@@ -1,5 +1,5 @@
 # Data
-dyn/datasets/ashok_data/*
+dyn/datasets/breast_cancer/*
 dyn/datasets/mutated_retinal_cells/*
 dyn/datasets/mutated_retinal_cells.zip
 dyn/datasets/single_border_protusion_cells/*
@@ -7,13 +7,8 @@ dyn/datasets/single_border_protusion_cells.zip
 dyn/datasets/drug_surviving_cells/*
 dyn/datasets/septin.zip
 dyn/datasets/septin3d.zip
-dyn/saved_figs/osteosarcoma/*
-dyn/saved_figs/retinal/*
-dyn/saved_figs/optimize_am/*
 dyn/datasets/septin_groups/*
 dyn/datasets/ply\ 3D\ surface\ models
-dyn/saved_figs/septin/*
-dyn/saved_txt/septin/*
 
 # Wandb
 dyn/wandb/*
