@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2023-12-18T05:20:19.878093</dc:date>
+    <dc:date>2023-12-18T21:34:22.784536</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -166,7 +166,7 @@ L 143.796709 46.870955
 L 142.635 46.428184 
 L 141.365797 45.792246 
 L 141.365797 45.792246 
-" clip-path="url(#p6d8244cf06)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#pa8e0efcecd)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_1">
     <!-- SRV-control -->
@@ -527,7 +527,7 @@ L 288.684536 39.821671
 L 287.794741 39.141818 
 L 287.133459 39.351342 
 L 287.133459 39.351342 
-" clip-path="url(#p578f283a87)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p22805d1584)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_2">
     <!-- SRV-cytd -->
@@ -738,7 +738,7 @@ L 434.895441 42.399203
 L 434.09845 41.948716 
 L 433.497707 41.823251 
 L 433.497707 41.823251 
-" clip-path="url(#pd53d665fb5)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p687544f0d9)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_3">
     <!-- SRV-jasp -->
@@ -935,7 +935,7 @@ L 146.701455 161.748044
 L 144.085071 160.745235 
 L 141.424159 160.134372 
 L 141.424159 160.134372 
-" clip-path="url(#pb53a63fcb2)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p51961b6905)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_4">
     <!-- Linear-control -->
@@ -1147,7 +1147,7 @@ L 293.27558 162.263886
 L 292.561135 161.358465 
 L 291.819454 160.883608 
 L 291.819454 160.883608 
-" clip-path="url(#pf511d8bffb)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p108ad94104)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_5">
     <!-- Linear-cytd -->
@@ -1282,7 +1282,7 @@ L 442.438013 160.891233
 L 440.483752 160.259262 
 L 439.416213 160.101818 
 L 439.416213 160.101818 
-" clip-path="url(#pf06f3ca5f6)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p5c5720933c)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_6">
     <!-- Linear-jasp -->
@@ -1303,22 +1303,22 @@ L 439.416213 160.101818
   </g>
  </g>
  <defs>
-  <clipPath id="p6d8244cf06">
+  <clipPath id="pa8e0efcecd">
    <rect x="67.5" y="34.56" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="p578f283a87">
+  <clipPath id="p22805d1584">
    <rect x="215.205882" y="34.56" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="pd53d665fb5">
+  <clipPath id="p687544f0d9">
    <rect x="362.911765" y="34.56" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="pb53a63fcb2">
+  <clipPath id="p51961b6905">
    <rect x="67.5" y="155.52" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="pf511d8bffb">
+  <clipPath id="p108ad94104">
    <rect x="215.205882" y="155.52" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="pf06f3ca5f6">
+  <clipPath id="p5c5720933c">
    <rect x="362.911765" y="155.52" width="123.088235" height="100.8"/>
   </clipPath>
  </defs>
