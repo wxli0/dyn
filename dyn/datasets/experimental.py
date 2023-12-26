@@ -11,16 +11,16 @@ import geomstats.datasets.utils as data_utils
 
 # import matplotlib.pyplot as plt
 import numpy as np
-import skimage.io as skio
+# import skimage.io as skio
 
 # import skimage.viewer as skview
 from geomstats.geometry.pre_shape import PreShapeSpace
 
 # from skimage import io, measure
-from skimage import measure
-from skimage.filters import threshold_otsu
+# from skimage import measure
+# from skimage.filters import threshold_otsu
 
-import dyn.dyn.features.basic as basic
+# import dyn.dyn.features.basic as basic
 
 #
 
@@ -238,6 +238,58 @@ def preprocess(
                 cell_shapes[i_cell] = _exhaustive_align(cell_shape, cell_shapes[0])
 
     return cells, cell_shapes, labels_a, labels_b
+
+
+def preprocess_cells(
+    cells,
+    n_cells,
+    n_sampling_points,
+    quotient=["scaling", "rotation"],
+):
+    """Preprocess a dataset of cells.
+
+    Parameters
+    ----------
+    cells : list of all cells
+        Each cell is an array of points in 2D.
+    labels_a : list of str
+        List of labels associated with each cell.
+    labels_b : list of str
+        List of labels associated with each cell.
+    n_cells : int
+        Number of cells to (randomly) select from this dataset.
+    n_sampling_points : int
+        Number of sampling points along the boundary of each cell.
+    """
+    if n_cells > 0:
+        print(f"... Selecting only a random subset of {n_cells} / {len(cells)} cells.")
+        indices = sorted(
+            np.random.choice(gs.arange(0, len(cells), 1), size=n_cells, replace=False)
+        )
+        # last_id = indices[-1]
+        cells = [cells[idx] for idx in indices]
+
+
+    if n_sampling_points > 0:
+        print(
+            "... Interpolating: "
+            f"Cell boundaries have {n_sampling_points} samplings points."
+        )
+        interpolated_cells = gs.zeros((n_cells, n_sampling_points, 2))
+        for i_cell, cell in enumerate(cells):
+            interpolated_cells[i_cell] = _interpolate(cell, n_sampling_points)
+
+        cells = interpolated_cells
+
+    print("... Removing potential duplicate sampling points on cell boundaries.")
+    for i_cell, cell in enumerate(cells):
+        cells[i_cell] = _remove_consecutive_duplicates(cell)
+
+    print("\n- Cells: quotienting translation.")
+    cells = cells - gs.mean(cells, axis=-2)[..., None, :]
+
+
+    return cells
 
 
 def load_treated_osteosarcoma_cells(
