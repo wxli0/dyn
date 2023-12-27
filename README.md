@@ -15,3 +15,5 @@ For [Geometry Information](https://link.springer.com/collections/cadahjefhd) sub
 - [osteosarcoma_analysis.ipynb](https://github.com/wxli0/dyn/blob/main/dyn/notebooks/osteosarcoma_analysis.ipynb): Analysis of the osteosarcoma dataset.
 
 - [breast_cancer_analysis.ipynb](https://github.com/wxli0/dyn/blob/main/dyn/notebooks/breast_cancer_analysis.ipynb): Analysis of the breast cancer dataset.
+
+The new dataset of breast cancer image is in 

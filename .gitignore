@@ -1,5 +1,7 @@
 # Data
 dyn/datasets/breast_cancer/*
+!dyn/datasets/breast_cancer/cells.txt
+!dyn/datasets/breast_cancer/lines.txt
 dyn/datasets/mutated_retinal_cells/*
 dyn/datasets/mutated_retinal_cells.zip
 dyn/datasets/single_border_protusion_cells/*
