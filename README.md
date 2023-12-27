@@ -16,4 +16,4 @@ For [Geometry Information](https://link.springer.com/collections/cadahjefhd) sub
 
 - [breast_cancer_analysis.ipynb](https://github.com/wxli0/dyn/blob/main/dyn/notebooks/breast_cancer_analysis.ipynb): Analysis of the breast cancer dataset.
 
-The new dataset of breast cancer image is in 
+The new dataset of breast cancer image is in [breast_cancer](https://github.com/wxli0/dyn/tree/main/dyn/datasets/breast_cancer). [cells.txt](https://github.com/wxli0/dyn/blob/main/dyn/datasets/breast_cancer/cells.txt) contains the 2D coordinates of individual cell shapes, separated by newlines. [lines.txt](https://github.com/wxli0/dyn/blob/main/dyn/datasets/breast_cancer/lines.txt) contains the line type for the cells in [cells.txt](https://github.com/wxli0/dyn/blob/main/dyn/datasets/breast_cancer/cells.txt). 
