@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2023-12-25T20:37:30.931911</dc:date>
+    <dc:date>2023-12-26T22:01:57.109394</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -197,7 +197,7 @@ L 333.622121 55.877269
 L 326.906242 55.877269 
 L 323.548303 52.519329 
 L 323.548303 52.519329 
-" clip-path="url(#pb8e3d23bad)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#pb706993dcc)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_1">
     <!-- Original curve (166 points) -->
@@ -828,7 +828,7 @@ L 786.202617 56.415825
 L 781.756073 55.270469 
 L 777.814509 53.047094 
 L 777.814509 53.047094 
-" clip-path="url(#p658e28549e)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p5a12df2d0e)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_2">
     <!-- Interpolated curve (200 points) -->
@@ -949,10 +949,10 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pb8e3d23bad">
+  <clipPath id="pb706993dcc">
    <rect x="135" y="43.2" width="380.454545" height="277.2"/>
   </clipPath>
-  <clipPath id="p658e28549e">
+  <clipPath id="p5a12df2d0e">
    <rect x="591.545455" y="43.2" width="380.454545" height="277.2"/>
   </clipPath>
  </defs>

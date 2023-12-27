@@ -65,3 +65,23 @@ def remove_cells(cells, cell_shapes, lines, ds_align, delete_indices, num_layer)
     elif num_layer == 2:
         ds_align = remove_ds_align_two_layer(ds_align, delete_indices)
     return cells, cell_shapes, lines, ds_align
+
+
+
+def remove_cell_shapes(cell_shapes, ds_align, delete_indices, num_layer):
+    """ 
+    Remove cells of control group from cells, cell_shapes, lines, ds_align,
+    the parameters returned from load_treated_osteosarcoma_cells
+    Also update n_cells
+
+    :param list[int] delete_indices: the indices to delete
+    """
+    delete_indices.sort(reverse=True) # to prevent change in index when deleting elements
+    
+    # Delete elements
+    cell_shapes = np.delete(np.array(cell_shapes), delete_indices, axis=0)
+    if num_layer == 1:
+        ds_align = remove_ds_align_one_layer(ds_align, delete_indices)
+    elif num_layer == 2:
+        ds_align = remove_ds_align_two_layer(ds_align, delete_indices)
+    return cell_shapes, ds_align
