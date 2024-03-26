@@ -6,11 +6,11 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2023-12-28T18:22:35.886790</dc:date>
+    <dc:date>2024-03-26T09:49:42.632965</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
-      <dc:title>Matplotlib v3.6.2, https://matplotlib.org/</dc:title>
+      <dc:title>Matplotlib v3.8.3, https://matplotlib.org/</dc:title>
      </cc:Agent>
     </dc:creator>
    </cc:Work>
@@ -166,7 +166,7 @@ L 143.796709 46.870955
 L 142.635 46.428184 
 L 141.365797 45.792246 
 L 141.365797 45.792246 
-" clip-path="url(#pb0983599e3)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#pcf182fa4dd)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_1">
     <!-- SRV-control -->
@@ -527,7 +527,7 @@ L 288.684536 39.821671
 L 287.794741 39.141818 
 L 287.133459 39.351342 
 L 287.133459 39.351342 
-" clip-path="url(#p4bcf8d3334)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#pdd4ac451d9)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_2">
     <!-- SRV-cytd -->
@@ -738,7 +738,7 @@ L 434.895441 42.399203
 L 434.09845 41.948716 
 L 433.497707 41.823251 
 L 433.497707 41.823251 
-" clip-path="url(#p2bcc045654)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p52fa856f0b)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_3">
     <!-- SRV-jasp -->
@@ -935,7 +935,7 @@ L 146.701455 161.748044
 L 144.085071 160.745235 
 L 141.424159 160.134372 
 L 141.424159 160.134372 
-" clip-path="url(#ped03b75387)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p58e1c40f0f)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_4">
     <!-- Linear-control -->
@@ -1147,7 +1147,7 @@ L 293.27558 162.263886
 L 292.561135 161.358465 
 L 291.819454 160.883608 
 L 291.819454 160.883608 
-" clip-path="url(#p03e6f13739)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p638bb4e333)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_5">
     <!-- Linear-cytd -->
@@ -1282,7 +1282,7 @@ L 442.438013 160.891233
 L 440.483752 160.259262 
 L 439.416213 160.101818 
 L 439.416213 160.101818 
-" clip-path="url(#p2ef0fccb3a)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p3af2b57517)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_6">
     <!-- Linear-jasp -->
@@ -1303,22 +1303,22 @@ L 439.416213 160.101818
   </g>
  </g>
  <defs>
-  <clipPath id="pb0983599e3">
+  <clipPath id="pcf182fa4dd">
    <rect x="67.5" y="34.56" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="p4bcf8d3334">
+  <clipPath id="pdd4ac451d9">
    <rect x="215.205882" y="34.56" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="p2bcc045654">
+  <clipPath id="p52fa856f0b">
    <rect x="362.911765" y="34.56" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="ped03b75387">
+  <clipPath id="p58e1c40f0f">
    <rect x="67.5" y="155.52" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="p03e6f13739">
+  <clipPath id="p638bb4e333">
    <rect x="215.205882" y="155.52" width="123.088235" height="100.8"/>
   </clipPath>
-  <clipPath id="p2ef0fccb3a">
+  <clipPath id="p3af2b57517">
    <rect x="362.911765" y="155.52" width="123.088235" height="100.8"/>
   </clipPath>
  </defs>
