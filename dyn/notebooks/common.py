@@ -46,7 +46,7 @@ def remove_ds_two_layer(ds, delete_indices):
     return ds
 
 
-def remove_cells(cells, cell_shapes, lines, ds_proc, ds_proj, ds_align, delete_indices, num_layer):
+def remove_cells(cells, cell_shapes, lines, treatments, ds_proc, ds_proj, ds_align, delete_indices, num_layer):
     """ 
     Remove cells of control group from cells, cell_shapes, ds,
     the parameters returned from load_treated_osteosarcoma_cells
@@ -60,6 +60,7 @@ def remove_cells(cells, cell_shapes, lines, ds_proc, ds_proj, ds_align, delete_i
     cells = del_arr_elements(cells, delete_indices)
     cell_shapes = np.delete(np.array(cell_shapes), delete_indices, axis=0)
     lines = list(np.delete(np.array(lines), delete_indices, axis=0))
+    treatments = list(np.delete(np.array(treatments), delete_indices, axis=0))
     if num_layer == 1:
         ds_proc = remove_ds_one_layer(ds_proc, delete_indices)
         ds_proj = remove_ds_one_layer(ds_proj, delete_indices)
@@ -68,7 +69,7 @@ def remove_cells(cells, cell_shapes, lines, ds_proc, ds_proj, ds_align, delete_i
         ds_proc = remove_ds_two_layer(ds_proc, delete_indices)
         ds_proj = remove_ds_two_layer(ds_proj, delete_indices)
         ds_align = remove_ds_two_layer(ds_align, delete_indices)
-    return cells, cell_shapes, lines, ds_proc, ds_align, ds_align
+    return cells, cell_shapes, lines, treatments, ds_proc, ds_align, ds_align
 
 
 
