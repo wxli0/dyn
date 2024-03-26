@@ -26,29 +26,29 @@ def parallel_dist(cells, dist_fun, k_sampling_points):
     pairwise_dists += pairwise_dists.T
     return pairwise_dists
 
-def remove_ds_align_one_layer(ds_align, delete_indices):
+def remove_ds_one_layer(ds, delete_indices):
     count = 0
-    for line, line_cells in ds_align.items():
+    for line, line_cells in ds.items():
         for i, _ in reversed(list(enumerate(line_cells))):
             if count in delete_indices:
-                ds_align[line] = np.concatenate((ds_align[line][:i], ds_align[line][i+1:]), axis=0)
+                ds[line] = np.concatenate((ds[line][:i], ds[line][i+1:]), axis=0)
             count += 1
-    return ds_align
+    return ds
 
-def remove_ds_align_two_layer(ds_align, delete_indices):
+def remove_ds_two_layer(ds, delete_indices):
     count = 0
-    for treatment, treatment_values in ds_align.items():
+    for treatment, treatment_values in ds.items():
         for line, line_cells in treatment_values.items():
             for i, _ in reversed(list(enumerate(line_cells))):
                 if count in delete_indices:
-                    ds_align[treatment][line] = np.concatenate((ds_align[treatment][line][:i], ds_align[treatment][line][i+1:]), axis=0)
+                    ds[treatment][line] = np.concatenate((ds[treatment][line][:i], ds[treatment][line][i+1:]), axis=0)
                 count += 1
-    return ds_align
+    return ds
 
 
-def remove_cells(cells, cell_shapes, lines, ds_align, delete_indices, num_layer):
+def remove_cells(cells, cell_shapes, lines, ds_proc, ds_proj, ds_align, delete_indices, num_layer):
     """ 
-    Remove cells of control group from cells, cell_shapes, lines, ds_align,
+    Remove cells of control group from cells, cell_shapes, ds,
     the parameters returned from load_treated_osteosarcoma_cells
     Also update n_cells
 
@@ -61,10 +61,14 @@ def remove_cells(cells, cell_shapes, lines, ds_align, delete_indices, num_layer)
     cell_shapes = np.delete(np.array(cell_shapes), delete_indices, axis=0)
     lines = list(np.delete(np.array(lines), delete_indices, axis=0))
     if num_layer == 1:
-        ds_align = remove_ds_align_one_layer(ds_align, delete_indices)
+        ds_proc = remove_ds_one_layer(ds_proc, delete_indices)
+        ds_proj = remove_ds_one_layer(ds_proj, delete_indices)
+        ds_align = remove_ds_one_layer(ds_align, delete_indices)
     elif num_layer == 2:
-        ds_align = remove_ds_align_two_layer(ds_align, delete_indices)
-    return cells, cell_shapes, lines, ds_align
+        ds_proc = remove_ds_two_layer(ds_proc, delete_indices)
+        ds_proj = remove_ds_two_layer(ds_proj, delete_indices)
+        ds_align = remove_ds_two_layer(ds_align, delete_indices)
+    return cells, cell_shapes, lines, ds_proc, ds_align, ds_align
 
 
 
