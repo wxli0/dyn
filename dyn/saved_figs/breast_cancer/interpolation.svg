@@ -6,11 +6,11 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2023-12-28T20:56:44.078867</dc:date>
+    <dc:date>2024-03-29T11:18:21.098055</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
-      <dc:title>Matplotlib v3.6.2, https://matplotlib.org/</dc:title>
+      <dc:title>Matplotlib v3.8.3, https://matplotlib.org/</dc:title>
      </cc:Agent>
     </dc:creator>
    </cc:Work>
@@ -314,7 +314,7 @@ L 191.815508 305.329412
 L 189.34492 305.329412 
 L 186.874332 307.8 
 L 186.874332 307.8 
-" clip-path="url(#pefccbe9645)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p3361b142a6)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_1">
     <!-- Original curve (283 points) -->
@@ -987,7 +987,7 @@ L 655.117985 300.388235
 L 647.940929 305.329412 
 L 644.445101 306.774685 
 L 644.445101 306.774685 
-" clip-path="url(#pbeb63198a0)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#pf20334cdb8)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_2">
     <!-- Interpolated curve (200 points) -->
@@ -1084,10 +1084,10 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pefccbe9645">
+  <clipPath id="p3361b142a6">
    <rect x="135" y="43.2" width="380.454545" height="277.2"/>
   </clipPath>
-  <clipPath id="pbeb63198a0">
+  <clipPath id="pf20334cdb8">
    <rect x="591.545455" y="43.2" width="380.454545" height="277.2"/>
   </clipPath>
  </defs>

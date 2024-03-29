@@ -6,11 +6,11 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2023-12-28T20:58:27.841289</dc:date>
+    <dc:date>2024-03-29T11:20:05.530239</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
-      <dc:title>Matplotlib v3.6.2, https://matplotlib.org/</dc:title>
+      <dc:title>Matplotlib v3.8.3, https://matplotlib.org/</dc:title>
      </cc:Agent>
     </dc:creator>
    </cc:Work>
@@ -234,7 +234,7 @@ L 56.761622 122.689919
 L 52.907916 119.283779 
 L 49.760209 117.731146 
 L 49.760209 117.731146 
-" clip-path="url(#pf79ca9daa3)" style="fill: none; stroke: #808080; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#pb86a1d7d6b)" style="fill: none; stroke: #808080; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_1">
     <!-- 154 -->
@@ -497,7 +497,7 @@ L 185.035977 109.113418
 L 190.184528 110.599193 
 L 191.838962 112.729679 
 L 191.838962 112.729679 
-" clip-path="url(#pec6a611168)" style="fill: none; stroke: #808080; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p8cfd75ad33)" style="fill: none; stroke: #808080; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_2">
     <!-- 384 -->
@@ -770,7 +770,7 @@ L 374.200843 103.093361
 L 372.862924 104.361544 
 L 376.770655 110.025859 
 L 376.770655 110.025859 
-" clip-path="url(#pe815e3ab89)" style="fill: none; stroke: #808080; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p8b644d0c79)" style="fill: none; stroke: #808080; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_3">
     <!-- 606 -->
@@ -836,13 +836,13 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pf79ca9daa3">
+  <clipPath id="pb86a1d7d6b">
    <rect x="10.8" y="27.6" width="129.6" height="105.6"/>
   </clipPath>
-  <clipPath id="pec6a611168">
+  <clipPath id="p8cfd75ad33">
    <rect x="151.2" y="27.6" width="129.6" height="105.6"/>
   </clipPath>
-  <clipPath id="pe815e3ab89">
+  <clipPath id="p8b644d0c79">
    <rect x="291.6" y="27.6" width="129.6" height="105.6"/>
   </clipPath>
  </defs>

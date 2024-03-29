@@ -1,5 +1,8 @@
 import numpy as np 
 from numba import jit, njit, prange
+import scipy.stats as stats
+from scipy.integrate import simpson
+
 
 
 def del_arr_elements(arr, indices):
@@ -46,7 +49,28 @@ def remove_ds_two_layer(ds, delete_indices):
     return ds
 
 
-def remove_cells(cells, cell_shapes, lines, treatments, ds_proc, ds_proj, ds_align, delete_indices, num_layer):
+def remove_cells_one_layer(cells, cell_shapes, lines, ds_proc, ds_proj, ds_align, delete_indices):
+    """ 
+    Remove cells of control group from cells, cell_shapes, ds,
+    the parameters returned from load_treated_osteosarcoma_cells
+    Also update n_cells
+
+    :param list[int] delete_indices: the indices to delete
+    """
+    delete_indices.sort(reverse=True) # to prevent change in index when deleting elements
+    
+    # Delete elements
+    cells = del_arr_elements(cells, delete_indices)
+    cell_shapes = np.delete(np.array(cell_shapes), delete_indices, axis=0)
+    lines = list(np.delete(np.array(lines), delete_indices, axis=0))
+    ds_proc = remove_ds_one_layer(ds_proc, delete_indices)
+    ds_proj = remove_ds_one_layer(ds_proj, delete_indices)
+    ds_align = remove_ds_one_layer(ds_align, delete_indices)
+
+    return cells, cell_shapes, lines,  ds_proc, ds_align, ds_align
+
+
+def remove_cells_two_layer(cells, cell_shapes, lines, treatments, ds_proc, ds_proj, ds_align, delete_indices):
     """ 
     Remove cells of control group from cells, cell_shapes, ds,
     the parameters returned from load_treated_osteosarcoma_cells
@@ -61,14 +85,10 @@ def remove_cells(cells, cell_shapes, lines, treatments, ds_proc, ds_proj, ds_ali
     cell_shapes = np.delete(np.array(cell_shapes), delete_indices, axis=0)
     lines = list(np.delete(np.array(lines), delete_indices, axis=0))
     treatments = list(np.delete(np.array(treatments), delete_indices, axis=0))
-    if num_layer == 1:
-        ds_proc = remove_ds_one_layer(ds_proc, delete_indices)
-        ds_proj = remove_ds_one_layer(ds_proj, delete_indices)
-        ds_align = remove_ds_one_layer(ds_align, delete_indices)
-    elif num_layer == 2:
-        ds_proc = remove_ds_two_layer(ds_proc, delete_indices)
-        ds_proj = remove_ds_two_layer(ds_proj, delete_indices)
-        ds_align = remove_ds_two_layer(ds_align, delete_indices)
+    ds_proc = remove_ds_two_layer(ds_proc, delete_indices)
+    ds_proj = remove_ds_two_layer(ds_proj, delete_indices)
+    ds_align = remove_ds_two_layer(ds_align, delete_indices)
+
     return cells, cell_shapes, lines, treatments, ds_proc, ds_align, ds_align
 
 
@@ -90,3 +110,39 @@ def remove_cell_shapes(cell_shapes, ds_align, delete_indices, num_layer):
     elif num_layer == 2:
         ds_align = remove_ds_align_two_layer(ds_align, delete_indices)
     return cell_shapes, ds_align
+
+
+def overlap_ratio(distance1, distance2):
+    """ 
+    Calculate the ratio of overlap regions between the histograms of distance1 and distance
+
+    :param list[float] distance1: list of positive distances 
+    :param list[float] distance2: list of positive distances 
+    :param function kde1: the kernel density estimation of distance1
+    :param function kde2: the kernel density estimation of distance2
+    """
+
+    # Define a common set of points for evaluation (covering the range of both datasets)
+    x_eval = np.linspace(min(np.min(distance1), np.min(distance2)), max(np.max(distance1), np.max(distance2)), 1000)
+
+    # Create KDEs for the two datasets
+    kde1 = stats.gaussian_kde(distance1)
+    kde2 = stats.gaussian_kde(distance2)
+
+    # Evaluate the KDEs on these points
+    kde_values1 = kde1(x_eval)
+    kde_values2 = kde2(x_eval)
+
+    # Find the minimum of the two KDEs at each point to determine the overlap
+    overlap_values = np.minimum(kde_values1, kde_values2)
+
+    # Integrate the overlap using the composite Simpson's rule
+    overlap_area = simpson(overlap_values, x=x_eval)
+
+    # Calculate the total area under one of the KDEs as a reference (should be close to 1)
+    total_area = simpson(kde_values1, x=x_eval)  # or use kde_values2, should be about the same
+
+    # Calculate the ratio of the overlap
+    overlap_ratio = (overlap_area / total_area) 
+
+    return overlap_ratio
