@@ -2,6 +2,9 @@ import numpy as np
 from numba import jit, njit, prange
 import scipy.stats as stats
 from scipy.integrate import simpson
+from sklearn.model_selection import cross_val_score
+from sklearn.neighbors import KNeighborsClassifier
+
 
 
 
@@ -146,3 +149,9 @@ def overlap_ratio(distance1, distance2):
     overlap_ratio = (overlap_area / total_area) 
 
     return overlap_ratio
+
+
+def knn_score(pos, labels):
+    clf = KNeighborsClassifier(n_neighbors=3)
+    scores = cross_val_score(clf, pos, labels, cv=5, scoring='accuracy')
+    return scores.mean()
