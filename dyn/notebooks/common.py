@@ -6,6 +6,12 @@ from sklearn.model_selection import cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 
 
+from geomstats.geometry.discrete_curves import (
+    DiscreteCurvesStartingAtOrigin,
+    SRVMetric,
+    insert_zeros,
+)
+
 
 
 def del_arr_elements(arr, indices):
@@ -155,3 +161,40 @@ def knn_score(pos, labels):
     clf = KNeighborsClassifier(n_neighbors=3)
     scores = cross_val_score(clf, pos, labels, cv=5, scoring='accuracy')
     return scores.mean()
+
+
+def exhaustive_align(curve, ref_curve, k_sampling_points, rotation_only=False):
+    """ 
+    Quotient out
+        - translation (move curve to start at the origin) 
+        - rescaling (normalize to have length one)
+        - rotation (try different starting points, during alignment)
+        - reparametrization (resampling in the discrete case, during alignment)
+    
+    :param bool rotation_only: quotient out rotation only rather than rotation and reparameterization
+
+    """
+    print("enter exhaustive_align")
+    
+    curves_r2 = DiscreteCurvesStartingAtOrigin(
+        ambient_dim=2, k_sampling_points=k_sampling_points, equip=False
+    )
+
+    # Quotient out translation
+    curve = curves_r2.projection(curve)
+    ref_curve = curves_r2.projection(ref_curve)
+
+    # Quotient out rescaling
+    curve = curves_r2.normalize(curve)
+    ref_curve = curves_r2.normalize(ref_curve)
+
+    # Quotient out rotation and reparamterization
+    curves_r2.equip_with_metric(SRVMetric)
+    if rotation_only:
+        curves_r2.equip_with_group_action("rotations")
+    else:
+        curves_r2.equip_with_group_action("rotations and reparametrizations")
+        
+    curves_r2.equip_with_quotient_structure()
+    aligned_curve = curves_r2.fiber_bundle.align(curve, ref_curve)
+    return aligned_curve
