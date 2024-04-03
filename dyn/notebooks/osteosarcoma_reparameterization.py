@@ -165,48 +165,6 @@ def preprocess(curve, tol=1e-10):
 
     return curve
 
-
-
-from geomstats.geometry.discrete_curves import (
-    DiscreteCurvesStartingAtOrigin,
-    SRVMetric,
-    insert_zeros,
-)
-
-
-
-
-def exhaustive_align(curve, ref_curve):
-    """ 
-    Quotient out
-        - translation (move curve to start at the origin) 
-        - rescaling (normalize to have length one)
-        - rotation (try different starting points, during alignment)
-        - reparametrization (resampling in the discrete case, during alignment)
-    """
-    print("enter exhaustive_align")
-    
-    curves_r2 = DiscreteCurvesStartingAtOrigin(
-        ambient_dim=2, k_sampling_points=k_sampling_points, equip=False
-    )
-
-    # Quotient out translation
-    curve = curves_r2.projection(curve)
-    ref_curve = curves_r2.projection(ref_curve)
-
-    # Quotient out rescaling
-    curve = curves_r2.normalize(curve)
-    ref_curve = curves_r2.normalize(ref_curve)
-
-    # Quotient out rotation and reparamterization
-    curves_r2.equip_with_metric(SRVMetric)
-    curves_r2.equip_with_group_action("rotations and reparametrizations")
-    curves_r2.equip_with_quotient_structure()
-    aligned_curve = curves_r2.fiber_bundle.align(curve, ref_curve)
-    return aligned_curve
-    
-
-
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
 
@@ -217,16 +175,27 @@ BASE_CURVE = ds_proc["control"]["dunn"][0]
 
 data_folder = os.path.join(data_path, dataset_name, "aligned")
 
+# for treatment in TREATMENTS:
+#     for line in LINES:
+#         cells = ds_proc[treatment][line]
+#         for i, cell in enumerate(cells):
+#             try:
+#                 aligned_cell = exhaustive_align(cell, BASE_CURVE,  rotation_only=False)
+#                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
+#                 np.savetxt(file_path, aligned_cell)
+#             except Exception:
+#                 print("enter Exception")
+#                 pass
+
 for treatment in TREATMENTS:
     for line in LINES:
         cells = ds_proc[treatment][line]
         for i, cell in enumerate(cells):
-            try:
-                aligned_cell = exhaustive_align(cell, BASE_CURVE)
-                file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
+            file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
+            if not os.path.exists(file_path):
+                file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}_rotation_only.txt")
+                aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rotation_only=True)
                 np.savetxt(file_path, aligned_cell)
-            except Exception:
-                print("enter Exception")
-                pass
+
 
 
