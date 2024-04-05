@@ -8,10 +8,9 @@ from sklearn.neighbors import KNeighborsClassifier
 
 from geomstats.geometry.discrete_curves import (
     DiscreteCurvesStartingAtOrigin,
-    SRVMetric,
-    insert_zeros,
+    DynamicProgrammingAligner,
+    SRVReparametrizationBundle
 )
-
 
 
 def del_arr_elements(arr, indices):
@@ -163,7 +162,7 @@ def knn_score(pos, labels):
     return scores.mean()
 
 
-def exhaustive_align(curve, ref_curve, k_sampling_points, rotation_only=False):
+def exhaustive_align(curve, ref_curve, k_sampling_points, dynamic=False, rotation_only=False):
     """ 
     Quotient out
         - translation (move curve to start at the origin) 
@@ -171,6 +170,7 @@ def exhaustive_align(curve, ref_curve, k_sampling_points, rotation_only=False):
         - rotation (try different starting points, during alignment)
         - reparametrization (resampling in the discrete case, during alignment)
     
+    :param bool dynamic: Use dynamic aligner or not 
     :param bool rotation_only: quotient out rotation only rather than rotation and reparameterization
 
     """
@@ -179,6 +179,10 @@ def exhaustive_align(curve, ref_curve, k_sampling_points, rotation_only=False):
     curves_r2 = DiscreteCurvesStartingAtOrigin(
         ambient_dim=2, k_sampling_points=k_sampling_points, equip=False
     )
+
+    if dynamic:
+        curves_r2.fiber_bundle = SRVReparametrizationBundle(curves_r2)
+        curves_r2.fiber_bundle.aligner = DynamicProgrammingAligner()
 
     # Quotient out translation
     curve = curves_r2.projection(curve)

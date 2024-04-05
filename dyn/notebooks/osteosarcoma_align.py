@@ -171,31 +171,21 @@ ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
 
-BASE_CURVE = ds_proc["control"]["dunn"][0]
+BASE_CURVE = ds_proc["control"]["dlm8"][0]
 
 data_folder = os.path.join(data_path, dataset_name, "aligned")
-
-# for treatment in TREATMENTS:
-#     for line in LINES:
-#         cells = ds_proc[treatment][line]
-#         for i, cell in enumerate(cells):
-#             try:
-#                 aligned_cell = exhaustive_align(cell, BASE_CURVE,  rotation_only=False)
-#                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
-#                 np.savetxt(file_path, aligned_cell)
-#             except Exception:
-#                 print("enter Exception")
-#                 pass
 
 for treatment in TREATMENTS:
     for line in LINES:
         cells = ds_proc[treatment][line]
         for i, cell in enumerate(cells):
-            file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
-            if not os.path.exists(file_path):
-                file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}_rotation_only.txt")
-                aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rotation_only=True)
+            try:
+                print("try exhaustive align with reparamterization")
+                aligned_cell = exhaustive_align(cell, BASE_CURVE, rotation_only=False)
+                file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
                 np.savetxt(file_path, aligned_cell)
-
+            except Exception:
+                print("enter Exception")
+                pass
 
 
