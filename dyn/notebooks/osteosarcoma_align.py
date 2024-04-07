@@ -181,7 +181,7 @@ for treatment in TREATMENTS:
         for i, cell in enumerate(cells):
             try:
                 print("try exhaustive align with reparamterization")
-                aligned_cell = exhaustive_align(cell, BASE_CURVE, rotation_only=False)
+                aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, dynamic=False, rotation_only=False)
                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
                 np.savetxt(file_path, aligned_cell)
             except Exception:

@@ -9,7 +9,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from geomstats.geometry.discrete_curves import (
     DiscreteCurvesStartingAtOrigin,
     DynamicProgrammingAligner,
-    SRVReparametrizationBundle
+    SRVReparametrizationBundle,
+    SRVMetric
 )
 
 

@@ -187,21 +187,21 @@ data_folder = os.path.join(data_path, dataset_name, "aligned")
 
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
-BASE_CURVE = ds_proc["MCF7"][0]
+BASE_CURVE = ds_proc["MCF10A"][0]
 
 
 for line in LINES:
     cells = ds_proc[line]
     for i, cell in enumerate(cells):
         try:
-            print("try exhaustiv align with reparamterization")
-            aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rotation_only=False)
+            print("try exhaustive align with reparamterization")
+            aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, dynamic=False, rotation_only=False)
             file_path = os.path.join(data_folder, f"{line}_{i}.txt")
             np.savetxt(file_path, aligned_cell)
         except Exception:
-            print("enter rotation only")
-            file_path = os.path.join(data_folder, f"{line}_{i}_rotation_only.txt")
-            aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rotation_only=True)
-            np.savetxt(file_path, aligned_cell)
+            print("exception")
+            # file_path = os.path.join(data_folder, f"{line}_{i}_rotation_only.txt")
+            # aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rotation_only=True)
+            # np.savetxt(file_path, aligned_cell)
             pass
 
