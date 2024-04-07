@@ -161,7 +161,7 @@ def knn_score(pos, labels):
     return scores.mean()
 
 
-def exhaustive_align(curve, ref_curve, k_sampling_points, dynamic=False, rotation_only=False):
+def exhaustive_align(curve, ref_curve, k_sampling_points, rescale=True, dynamic=False, rotation_only=False):
     """ 
     Quotient out
         - translation (move curve to start at the origin) 
@@ -169,33 +169,39 @@ def exhaustive_align(curve, ref_curve, k_sampling_points, dynamic=False, rotatio
         - rotation (try different starting points, during alignment)
         - reparametrization (resampling in the discrete case, during alignment)
     
+    :param bool rescale: quotient out rescaling or not 
     :param bool dynamic: Use dynamic aligner or not 
     :param bool rotation_only: quotient out rotation only rather than rotation and reparameterization
 
     """
-    print("enter exhaustive_align")
     
     curves_r2 = DiscreteCurvesStartingAtOrigin(
         ambient_dim=2, k_sampling_points=k_sampling_points, equip=False
     )
 
     if dynamic:
+        print("Use dynamic programming aligner")
         curves_r2.fiber_bundle = SRVReparametrizationBundle(curves_r2)
         curves_r2.fiber_bundle.aligner = DynamicProgrammingAligner()
 
     # Quotient out translation
+    print("Quotientint out translation")
     curve = curves_r2.projection(curve)
     ref_curve = curves_r2.projection(ref_curve)
 
     # Quotient out rescaling
-    curve = curves_r2.normalize(curve)
-    ref_curve = curves_r2.normalize(ref_curve)
+    if rescale:
+        print("Quotientint out rescaling")
+        curve = curves_r2.normalize(curve)
+        ref_curve = curves_r2.normalize(ref_curve)
 
     # Quotient out rotation and reparamterization
     curves_r2.equip_with_metric(SRVMetric)
     if rotation_only:
+        print("Quotientint out rotation")
         curves_r2.equip_with_group_action("rotations")
     else:
+        print("Quotienting out rotation and reparamterization")
         curves_r2.equip_with_group_action("rotations and reparametrizations")
         
     curves_r2.equip_with_quotient_structure()

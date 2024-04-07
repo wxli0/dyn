@@ -172,8 +172,13 @@ ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
 
 BASE_CURVE = ds_proc["control"]["dlm8"][0]
-
 data_folder = os.path.join(data_path, dataset_name, "aligned")
+
+rescale = False
+if rescale:
+    data_folder = os.path.join(data_folder, "rescaled")
+else:
+    data_folder = os.path.join(data_folder, "no_rescaled")
 
 for treatment in TREATMENTS:
     for line in LINES:
@@ -181,7 +186,7 @@ for treatment in TREATMENTS:
         for i, cell in enumerate(cells):
             try:
                 print("try exhaustive align with reparamterization")
-                aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, dynamic=False, rotation_only=False)
+                aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rescale=rescale, dynamic=False, rotation_only=False)
                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
                 np.savetxt(file_path, aligned_cell)
             except Exception:
