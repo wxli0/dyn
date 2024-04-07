@@ -66,7 +66,7 @@ def remove_cells_one_layer(cells, cell_shapes, lines, ds_proc, ds_align, delete_
 
     :param list[int] delete_indices: the indices to delete
     """
-    delete_indices.sort(reverse=True) # to prevent change in index when deleting elements
+    delete_indices = sorted(delete_indices, reverse=True) # to prevent change in index when deleting elements
     
     # Delete elements
     cells = del_arr_elements(cells, delete_indices)
