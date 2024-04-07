@@ -58,7 +58,7 @@ def remove_ds_two_layer(ds, delete_indices):
     return ds
 
 
-def remove_cells_one_layer(cells, cell_shapes, lines, ds_proc, ds_proj, ds_align, delete_indices):
+def remove_cells_one_layer(cells, cell_shapes, lines, ds_proc, ds_align, delete_indices):
     """ 
     Remove cells of control group from cells, cell_shapes, ds,
     the parameters returned from load_treated_osteosarcoma_cells
@@ -73,13 +73,12 @@ def remove_cells_one_layer(cells, cell_shapes, lines, ds_proc, ds_proj, ds_align
     cell_shapes = np.delete(np.array(cell_shapes), delete_indices, axis=0)
     lines = list(np.delete(np.array(lines), delete_indices, axis=0))
     ds_proc = remove_ds_one_layer(ds_proc, delete_indices)
-    ds_proj = remove_ds_one_layer(ds_proj, delete_indices)
     ds_align = remove_ds_one_layer(ds_align, delete_indices)
 
-    return cells, cell_shapes, lines,  ds_proc, ds_align, ds_align
+    return cells, cell_shapes, lines,  ds_proc, ds_align
 
 
-def remove_cells_two_layer(cells, cell_shapes, lines, treatments, ds_proc, ds_proj, ds_align, delete_indices):
+def remove_cells_two_layer(cells, cell_shapes, lines, treatments, ds_proc, ds_align, delete_indices):
     """ 
     Remove cells of control group from cells, cell_shapes, ds,
     the parameters returned from load_treated_osteosarcoma_cells
@@ -87,7 +86,7 @@ def remove_cells_two_layer(cells, cell_shapes, lines, treatments, ds_proc, ds_pr
 
     :param list[int] delete_indices: the indices to delete
     """
-    delete_indices.sort(reverse=True) # to prevent change in index when deleting elements
+    delete_indices = sorted(delete_indices, reverse=True) # to prevent change in index when deleting elements
     
     # Delete elements
     cells = del_arr_elements(cells, delete_indices)
@@ -95,10 +94,9 @@ def remove_cells_two_layer(cells, cell_shapes, lines, treatments, ds_proc, ds_pr
     lines = list(np.delete(np.array(lines), delete_indices, axis=0))
     treatments = list(np.delete(np.array(treatments), delete_indices, axis=0))
     ds_proc = remove_ds_two_layer(ds_proc, delete_indices)
-    ds_proj = remove_ds_two_layer(ds_proj, delete_indices)
     ds_align = remove_ds_two_layer(ds_align, delete_indices)
 
-    return cells, cell_shapes, lines, treatments, ds_proc, ds_align, ds_align
+    return cells, cell_shapes, lines, treatments, ds_proc, ds_align
 
 
 
