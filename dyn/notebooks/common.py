@@ -4,6 +4,7 @@ import scipy.stats as stats
 from scipy.integrate import simpson
 from sklearn.model_selection import cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn import svm
 
 
 from geomstats.geometry.discrete_curves import (
@@ -207,3 +208,14 @@ def exhaustive_align(curve, ref_curve, k_sampling_points, rescale=True, dynamic=
     curves_r2.equip_with_quotient_structure()
     aligned_curve = curves_r2.fiber_bundle.align(curve, ref_curve)
     return aligned_curve
+
+
+def knn_score(pos, labels):
+    clf = KNeighborsClassifier(n_neighbors=4)
+    scores = cross_val_score(clf, pos, labels, cv=5, scoring='accuracy')
+    return scores.mean()
+
+def svm_score(pos, labels):
+    clf = svm.SVC(kernel='rbf', C=1)
+    scores = cross_val_score(clf, pos, labels, cv=5, scoring='accuracy')
+    return scores.mean()
