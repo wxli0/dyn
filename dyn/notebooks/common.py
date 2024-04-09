@@ -162,7 +162,7 @@ def knn_score(pos, labels):
     return scores.mean()
 
 
-def exhaustive_align(curve, ref_curve, k_sampling_points, rescale=True, dynamic=False, rotation_only=False):
+def exhaustive_align(curve, ref_curve, k_sampling_points, rescale=True, dynamic=False, reparameterization=True):
     """ 
     Quotient out
         - translation (move curve to start at the origin) 
@@ -172,7 +172,7 @@ def exhaustive_align(curve, ref_curve, k_sampling_points, rescale=True, dynamic=
     
     :param bool rescale: quotient out rescaling or not 
     :param bool dynamic: Use dynamic aligner or not 
-    :param bool rotation_only: quotient out rotation only rather than rotation and reparameterization
+    :param bool reparamterization: quotient out rotation only rather than rotation and reparameterization
 
     """
     
@@ -198,7 +198,7 @@ def exhaustive_align(curve, ref_curve, k_sampling_points, rescale=True, dynamic=
 
     # Quotient out rotation and reparamterization
     curves_r2.equip_with_metric(SRVMetric)
-    if rotation_only:
+    if not reparameterization:
         print("Quotientint out rotation")
         curves_r2.equip_with_group_action("rotations")
     else:
