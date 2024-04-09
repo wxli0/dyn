@@ -92,6 +92,8 @@ def remove_cells_two_layer(cells, cell_shapes, lines, treatments, ds_proc, ds_al
     # Delete elements
     cells = del_arr_elements(cells, delete_indices)
     cell_shapes = np.delete(np.array(cell_shapes), delete_indices, axis=0)
+    for metric, _ in enumerate(cell_shapes):
+        cell_shapes[metric] = np.delete(np.array(cell_shapes[metric]), delete_indices, axis=0)
     lines = list(np.delete(np.array(lines), delete_indices, axis=0))
     treatments = list(np.delete(np.array(treatments), delete_indices, axis=0))
     ds_proc = remove_ds_two_layer(ds_proc, delete_indices)
