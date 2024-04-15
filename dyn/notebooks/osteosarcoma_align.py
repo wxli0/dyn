@@ -171,7 +171,8 @@ ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
 
-BASE_CURVE = ds_proc["control"]["dlm8"][0]
+BASE_CURVE = generate_circle_points(k_sampling_points)
+
 data_folder = os.path.join(data_path, dataset_name, "aligned")
 
 suffix = 'full'
@@ -179,9 +180,11 @@ rescale = True
 if not rescale:
     suffix = 'no_rescaled'
 
-reparameterization = False
+reparameterization = True
 if not reparameterization:
     suffix = 'no_reparameterization'
+
+dynamic = True
 
 data_folder = os.path.join(data_folder, suffix)
 
@@ -191,7 +194,7 @@ for treatment in TREATMENTS:
         cells = ds_proc[treatment][line]
         for i, cell in enumerate(cells):
             try:
-                aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rescale=rescale, reparameterization=reparameterization, dynamic=False)
+                aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rescale=rescale, reparameterization=reparameterization, dynamic=True)
                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
                 np.savetxt(file_path, aligned_cell)
             except Exception:

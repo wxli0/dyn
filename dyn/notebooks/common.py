@@ -188,20 +188,20 @@ def exhaustive_align(curve, ref_curve, k_sampling_points, rescale=True, dynamic=
         curves_r2.fiber_bundle.aligner = DynamicProgrammingAligner()
 
     # Quotient out translation
-    print("Quotientint out translation")
+    print("Quotienting out translation")
     curve = curves_r2.projection(curve)
     ref_curve = curves_r2.projection(ref_curve)
 
     # Quotient out rescaling
     if rescale:
-        print("Quotientint out rescaling")
+        print("Quotienting out rescaling")
         curve = curves_r2.normalize(curve)
         ref_curve = curves_r2.normalize(ref_curve)
 
     # Quotient out rotation and reparamterization
     curves_r2.equip_with_metric(SRVMetric)
     if not reparameterization:
-        print("Quotientint out rotation")
+        print("Quotienting out rotation")
         curves_r2.equip_with_group_action("rotations")
     else:
         print("Quotienting out rotation and reparamterization")
@@ -221,3 +221,17 @@ def svm_score(pos, labels):
     clf = svm.SVC(kernel='rbf', C=1)
     scores = cross_val_score(clf, pos, labels, cv=5, scoring='accuracy')
     return scores.mean()
+
+
+def generate_circle_points(num_points):
+    # Generate angles evenly distributed between 0 and 2*pi
+    angles = np.linspace(0, 2 * np.pi, num_points, endpoint=False)
+    
+    # Calculate x and y coordinates
+    x = np.cos(angles)
+    y = np.sin(angles)
+    
+    # Combine x and y coordinates into a 200x2 array
+    points = np.column_stack((x, y))
+    
+    return points

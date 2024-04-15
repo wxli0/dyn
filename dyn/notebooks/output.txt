@@ -1,0 +1,15 @@
+Will save figs to /home/wanxinli/dyn/dyn/saved_figs/osteosarcoma
+Total number of cells : 650
+['control' 'cytd' 'jasp']
+['dlm8' 'dunn']
+control :
+	 114 dlm8
+	 204 dunn
+cytd :
+	 82 dlm8
+	 93 dunn
+jasp :
+	 62 dlm8
+	 95 dunn
+check for duplicates in base curve: False
+check for duplicates in unaligned cell: False
