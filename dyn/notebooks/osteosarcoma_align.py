@@ -186,6 +186,30 @@ if not reparameterization:
 
 dynamic = True
 
+
+def align(point, base_point):
+    """
+    Align point and base_point via quotienting out translation, rescaling and reparameterization
+
+    Right now we do not quotient out rotation since
+    - Current geomstats does not support changing aligner for SRVRotationReparametrizationBundle
+    - The base curve we chose is a unit circle, so quotienting out rotation won't affect the result too much
+    """
+
+    total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points)
+    aligner = DynamicProgrammingAligner(total_space)
+    total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=aligner)
+    
+    point = total_space.projection(point)
+    base_point = total_space.projection(base_point)
+    point = total_space.normalize(point)
+    base_point = total_space.normalize(base_point)
+
+    base_point = total_space.projection(base_point)
+    point = total_space.projection(point)
+    other_aligned = total_space.fiber_bundle.align(point, base_point)
+    return other_aligned
+
 data_folder = os.path.join(data_folder, suffix)
 
 
@@ -194,7 +218,7 @@ for treatment in TREATMENTS:
         cells = ds_proc[treatment][line]
         for i, cell in enumerate(cells):
             try:
-                aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rescale=rescale, reparameterization=reparameterization, dynamic=True)
+                aligned_cell = align(cell, BASE_CURVE)
                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
                 np.savetxt(file_path, aligned_cell)
             except Exception:

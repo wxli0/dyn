@@ -167,14 +167,11 @@ print("check for duplicates in unaligned cell:", check_duplicates(unaligned_cell
 
 def align(point, base_point):
     total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points)
-    total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=DynamicProgrammingAligner)
-    # total_space.fiber_bundle.aligner = DynamicProgrammingAligner(total_space)
-    # other_aligner = DynamicProgrammingAligner()
-    # sampling_points = gs.linspace(0.0, 1.0, k_sampling_points)
+    aligner = DynamicProgrammingAligner(total_space)
+    total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=aligner)
 
     base_point = total_space.projection(base_point)
     point = total_space.projection(point)
-    # other_aligned = other_aligner.align(total_space, point, base_point)
     other_aligned = total_space.fiber_bundle.align(point, base_point)
     return other_aligned
 
