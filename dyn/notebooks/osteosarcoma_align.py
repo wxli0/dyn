@@ -134,7 +134,7 @@ def interpolate(curve, nb_points):
     return interpolation
 
 
-k_sampling_points = 200
+k_sampling_points = 2000
 
 
 cell_rand = cells[gs.random.randint(len(cells))]
@@ -176,15 +176,20 @@ BASE_CURVE = generate_circle_points(k_sampling_points)
 data_folder = os.path.join(data_path, dataset_name, "aligned")
 
 suffix = 'full'
+dynamic = True
 rescale = True
+rotation = False
+reparameterization = True
+
 if not rescale:
     suffix = 'no_rescaled'
 
-reparameterization = True
 if not reparameterization:
     suffix = 'no_reparameterization'
 
-dynamic = True
+if not rotation:
+    suffix = 'no_rotation'
+
 
 
 def align(point, base_point):
