@@ -190,6 +190,9 @@ if not reparameterization:
 if not rotation:
     suffix = 'no_rotation'
 
+if not rotation and not reparameterization:
+    suffix = 'no_rotation_no_reparameterization'
+
 
 
 def align(point, base_point):
@@ -210,8 +213,9 @@ def align(point, base_point):
     point = total_space.normalize(point)
     base_point = total_space.normalize(base_point)
 
-    base_point = total_space.projection(base_point)
-    point = total_space.projection(point)
+    if not rotation and not reparameterization:
+        return point
+
     other_aligned = total_space.fiber_bundle.align(point, base_point)
     return other_aligned
 
