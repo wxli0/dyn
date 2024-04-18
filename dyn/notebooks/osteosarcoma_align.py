@@ -177,12 +177,12 @@ data_folder = os.path.join(data_path, dataset_name, "aligned")
 
 suffix = 'full'
 dynamic = True
-rescale = True
+rescale = False
 rotation = False
-reparameterization = True
+reparameterization = False
 
 if not rescale:
-    suffix = 'no_rescaled'
+    suffix = 'no_rescale'
 
 if not reparameterization:
     suffix = 'no_reparameterization'
@@ -201,7 +201,7 @@ if not rotation and not rescale and not reparameterization:
 
 
 
-def align(point, base_point):
+def align(point, base_point, rescale, rotation, reparameterization):
     """
     Align point and base_point via quotienting out translation, rescaling and reparameterization
 
@@ -216,8 +216,10 @@ def align(point, base_point):
     
     point = total_space.projection(point)
     base_point = total_space.projection(base_point)
-    point = total_space.normalize(point)
-    base_point = total_space.normalize(base_point)
+
+    if rescale:
+        point = total_space.normalize(point)
+        base_point = total_space.normalize(base_point)
 
     if not rotation and not reparameterization:
         return point
@@ -233,7 +235,7 @@ for treatment in TREATMENTS:
         cells = ds_proc[treatment][line]
         for i, cell in enumerate(cells):
             try:
-                aligned_cell = align(cell, BASE_CURVE)
+                aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
                 np.savetxt(file_path, aligned_cell)
             except Exception:
