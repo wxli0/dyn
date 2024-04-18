@@ -2,9 +2,11 @@ import numpy as np
 from numba import jit, njit, prange
 import scipy.stats as stats
 from scipy.integrate import simpson
-from sklearn.model_selection import cross_val_score
+from sklearn.metrics import precision_score, recall_score
+from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import svm
+
 
 
 from geomstats.geometry.discrete_curves import (
@@ -236,3 +238,65 @@ def generate_circle_points(num_points):
     points = np.column_stack((x, y))
     
     return points
+
+def scaled_stress(pos, pairwise_dists):
+    """ 
+    Calculate the scaled stress invariant to scaling using the original stress \
+    statistics and actual pairwise distances
+
+    :param float unscaled_stress: the original stress
+    :param 2D np.array[float] pairwise_dists: pairwise distance
+    """
+    
+    # compute pairwise distance of pos
+    pairwise_pos = np.empty(shape=(pos.shape[0], pos.shape[0]))
+    for i in range(pos.shape[0]):
+        for j in range(pos.shape[0]):
+            pairwise_pos[i,j] = np.sqrt(np.sum(pos[i]-pos[j])**2)
+    
+    stress = np.sqrt(np.sum((pairwise_dists-pairwise_pos)**2))
+    
+    return stress/np.sqrt(np.sum(pairwise_dists**2))
+
+
+def svm_5_fold_classification(X, y):
+    # Initialize a Support Vector Classifier
+    svm_classifier = svm.SVC(kernel='rbf')
+
+    # Prepare to split the data into 5 folds, maintaining the percentage of samples for each class
+    skf = StratifiedKFold(n_splits=5)
+    
+    # To store precision and recall per class for each fold
+    precisions_per_class = []
+    recalls_per_class = []
+
+    # Perform 5-fold cross-validation
+    for train_index, test_index in skf.split(X, y):
+        # Splitting data into training and test sets
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+
+        # Train the model
+        svm_classifier.fit(X_train, y_train)
+        
+        # Predict on the test data
+        y_pred = svm_classifier.predict(X_test)
+
+        # Calculate precision and recall per class
+        precision = precision_score(y_test, y_pred, average=None, zero_division=np.nan)
+        recall = recall_score(y_test, y_pred, average=None, zero_division=np.nan)
+
+        # Store results from each fold
+        precisions_per_class.append(precision)
+        recalls_per_class.append(recall)
+    
+    # Calculate the mean precision and recall per class across all folds
+    mean_precisions = np.mean(precisions_per_class, axis=0)
+    mean_recalls = np.mean(recalls_per_class, axis=0)
+
+    np.set_printoptions(precision=2)
+    
+    print("Mean precisions per class across all folds:", mean_precisions)
+    print("Mean recalls per class across all folds:", mean_recalls)
+
+    return mean_precisions, mean_recalls
