@@ -193,6 +193,12 @@ if not rotation:
 if not rotation and not reparameterization:
     suffix = 'no_rotation_no_reparameterization'
 
+if not rotation and not rescale:
+    suffix = 'no_rotation_no_rescale'
+
+if not rotation and not rescale and not reparameterization:
+    suffix = 'no_rotation_no_rescale_no_reparameterization'
+
 
 
 def align(point, base_point):
