@@ -179,7 +179,7 @@ suffix = 'full'
 dynamic = True
 rescale = False
 rotation = False
-reparameterization = False
+reparameterization = True
 
 if not rescale:
     suffix = 'no_rescale'
