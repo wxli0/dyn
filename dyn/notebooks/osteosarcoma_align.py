@@ -178,7 +178,7 @@ data_folder = os.path.join(data_path, dataset_name, "aligned")
 suffix = 'full'
 rescale = True
 rotation = True
-reparameterization = True
+reparameterization = False
 
 if not rescale:
     suffix = 'no_rescale'
