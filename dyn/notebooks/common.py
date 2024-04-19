@@ -13,6 +13,7 @@ from geomstats.geometry.discrete_curves import (
     DiscreteCurvesStartingAtOrigin,
     DynamicProgrammingAligner,
     SRVReparametrizationBundle,
+    SRVRotationBundle,
     SRVRotationReparametrizationBundle,
     SRVMetric
 )

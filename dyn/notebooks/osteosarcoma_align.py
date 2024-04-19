@@ -176,9 +176,8 @@ BASE_CURVE = generate_circle_points(k_sampling_points)
 data_folder = os.path.join(data_path, dataset_name, "aligned")
 
 suffix = 'full'
-dynamic = True
-rescale = False
-rotation = False
+rescale = True
+rotation = True
 reparameterization = True
 
 if not rescale:
@@ -211,21 +210,28 @@ def align(point, base_point, rescale, rotation, reparameterization):
     """
 
     total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points)
-    aligner = DynamicProgrammingAligner(total_space)
-    total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=aligner)
+   
     
+    # Quotient out translation
     point = total_space.projection(point)
     base_point = total_space.projection(base_point)
 
+    # Quotient out rescaling
     if rescale:
         point = total_space.normalize(point)
         base_point = total_space.normalize(base_point)
+    
+    # Quotient out rotation
+    if rotation:
+        total_space.fiber_bundle = SRVRotationBundle(total_space)
+        point = total_space.fiber_bundle.align(point, base_point)
 
-    if not rotation and not reparameterization:
-        return point
-
-    other_aligned = total_space.fiber_bundle.align(point, base_point)
-    return other_aligned
+    # Quotient out reparameterization
+    if reparameterization:
+        aligner = DynamicProgrammingAligner(total_space)
+        total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=aligner)
+        point = total_space.fiber_bundle.align(point, base_point)
+    return point
 
 data_folder = os.path.join(data_folder, suffix)
 
