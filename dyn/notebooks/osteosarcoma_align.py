@@ -176,7 +176,7 @@ BASE_CURVE = generate_circle_points(k_sampling_points)
 data_folder = os.path.join(data_path, dataset_name, "aligned")
 
 suffix = 'full'
-rescale = True
+rescale = False
 rotation = True
 reparameterization = False
 
@@ -194,6 +194,9 @@ if not rotation and not reparameterization:
 
 if not rotation and not rescale:
     suffix = 'no_rotation_no_rescale'
+
+if not rescale and not reparameterization:
+    suffix = 'no_rescale_no_reparameterization'
 
 if not rotation and not rescale and not reparameterization:
     suffix = 'no_rotation_no_rescale_no_reparameterization'
