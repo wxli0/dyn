@@ -51,11 +51,6 @@ print(LINES)
 METRICS = ['SRV', 'Linear']
 
 
-cell_idx = 1
-plt.plot(cells[cell_idx][:, 0], cells[cell_idx][:, 1], "blue")
-plt.plot(cells[cell_idx][0, 0], cells[cell_idx][0, 1], "blue", marker="o");
-
-
 ds = {}
 
 n_cells_arr = gs.zeros((3, 2))

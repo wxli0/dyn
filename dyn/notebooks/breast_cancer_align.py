@@ -155,7 +155,7 @@ def interpolate(curve, nb_points):
         pos += incr
     return interpolation
 
-k_sampling_points = 200
+k_sampling_points = 2000
 
 ds_interp = apply_func_to_ds(
     input_ds=ds, func=lambda x: interpolate(x, k_sampling_points)
@@ -186,31 +186,80 @@ def preprocess(curve, tol=1e-10):
 data_folder = os.path.join(data_path, dataset_name, "aligned")
 
 suffix = 'full'
-rescale = True
-if not rescale:
-    suffix = 'no_rescaled'
+rescale = False
+rotation = True
+reparameterization = True
 
-reparameterization = False
+if not rescale:
+    suffix = 'no_rescale'
+
 if not reparameterization:
     suffix = 'no_reparameterization'
+
+if not rotation:
+    suffix = 'no_rotation'
+
+if not rotation and not reparameterization:
+    suffix = 'no_rotation_no_reparameterization'
+
+if not rotation and not rescale:
+    suffix = 'no_rotation_no_rescale'
+
+if not rescale and not reparameterization:
+    suffix = 'no_rescale_no_reparameterization'
+
+if not rotation and not rescale and not reparameterization:
+    suffix = 'no_rotation_no_rescale_no_reparameterization'
+
 
 data_folder = os.path.join(data_folder, suffix)
 
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
-BASE_CURVE = ds_proc["MCF10A"][0]
+BASE_CURVE = generate_circle_points(k_sampling_points)
+
+def align(point, base_point, rescale, rotation, reparameterization):
+    """
+    Align point and base_point via quotienting out translation, rescaling and reparameterization
+
+    Right now we do not quotient out rotation since
+    - Current geomstats does not support changing aligner for SRVRotationReparametrizationBundle
+    - The base curve we chose is a unit circle, so quotienting out rotation won't affect the result too much
+    """
+
+    total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points)
+   
+    
+    # Quotient out translation
+    point = total_space.projection(point)
+    base_point = total_space.projection(base_point)
+
+    # Quotient out rescaling
+    if rescale:
+        point = total_space.normalize(point)
+        base_point = total_space.normalize(base_point)
+    
+    # Quotient out rotation
+    if rotation:
+        total_space.fiber_bundle = SRVRotationBundle(total_space)
+        point = total_space.fiber_bundle.align(point, base_point)
+
+    # Quotient out reparameterization
+    if reparameterization:
+        aligner = DynamicProgrammingAligner(total_space)
+        total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=aligner)
+        point = total_space.fiber_bundle.align(point, base_point)
+    return point
 
 
 for line in LINES:
     cells = ds_proc[line]
     for i, cell in enumerate(cells):
         try:
-
-            print("try exhaustive align with reparamterization")
-            aligned_cell = exhaustive_align(cell, BASE_CURVE, k_sampling_points, rescale=rescale, reparameterization=reparameterization, dynamic=False)
+            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
             file_path = os.path.join(data_folder, f"{line}_{i}.txt")
             np.savetxt(file_path, aligned_cell)
         except Exception:
-            print("exception")
+            print("enter Exception")
             pass
 
