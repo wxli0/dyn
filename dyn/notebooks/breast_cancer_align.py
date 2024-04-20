@@ -1,5 +1,6 @@
 from decimal import Decimal
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 import geomstats.backend as gs
 from scipy.integrate import simpson
@@ -162,7 +163,6 @@ ds_interp = apply_func_to_ds(
 )
 
 
-import numpy as np
 
 def preprocess(curve, tol=1e-10):
     """Preprocess curve to ensure that there are no consecutive duplicate points.
@@ -188,7 +188,7 @@ data_folder = os.path.join(data_path, dataset_name, "aligned")
 suffix = 'full'
 rescale = False
 rotation = True
-reparameterization = True
+reparameterization = False
 
 if not rescale:
     suffix = 'no_rescale'
