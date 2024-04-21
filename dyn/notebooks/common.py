@@ -43,69 +43,6 @@ def parallel_dist(cells, dist_fun, k_sampling_points):
     pairwise_dists += pairwise_dists.T
     return pairwise_dists
 
-def remove_ds_one_layer(ds, delete_indices):
-    count = 0
-    for line, line_cells in ds.items():
-        for i, _ in reversed(list(enumerate(line_cells))):
-            if count in delete_indices:
-                ds[line] = np.concatenate((ds[line][:i], ds[line][i+1:]), axis=0)
-            count += 1
-    return ds
-
-def remove_ds_two_layer(ds, delete_indices):
-    count = 0
-    for treatment, treatment_values in ds.items():
-        for line, line_cells in treatment_values.items():
-            for i, _ in reversed(list(enumerate(line_cells))):
-                if count in delete_indices:
-                    ds[treatment][line] = np.concatenate((ds[treatment][line][:i], ds[treatment][line][i+1:]), axis=0)
-                count += 1
-    return ds
-
-
-def remove_cells_one_layer(cells, cell_shapes, lines, ds_proc, ds_align, delete_indices):
-    """ 
-    Remove cells of control group from cells, cell_shapes, ds,
-    the parameters returned from load_treated_osteosarcoma_cells
-    Also update n_cells
-
-    :param list[int] delete_indices: the indices to delete
-    """
-    delete_indices = sorted(delete_indices, reverse=True) # to prevent change in index when deleting elements
-    
-    # Delete elements
-    cells = del_arr_elements(cells, delete_indices)
-    cell_shapes = np.delete(np.array(cell_shapes), delete_indices, axis=0)
-    lines = list(np.delete(np.array(lines), delete_indices, axis=0))
-    ds_proc = remove_ds_one_layer(ds_proc, delete_indices)
-    ds_align = remove_ds_one_layer(ds_align, delete_indices)
-
-    return cells, cell_shapes, lines,  ds_proc, ds_align
-
-
-def remove_cells_two_layer(cells, cell_shapes, lines, treatments, ds_proc, ds_align, delete_indices):
-    """ 
-    Remove cells of control group from cells, cell_shapes, ds,
-    the parameters returned from load_treated_osteosarcoma_cells
-    Also update n_cells
-
-    :param list[int] delete_indices: the indices to delete
-    """
-    delete_indices = sorted(delete_indices, reverse=True) # to prevent change in index when deleting elements
-    
-    # Delete elements
-    cells = del_arr_elements(cells, delete_indices)
-    cell_shapes = np.delete(np.array(cell_shapes), delete_indices, axis=0)
-    for metric, _ in enumerate(cell_shapes):
-        cell_shapes[metric] = np.delete(np.array(cell_shapes[metric]), delete_indices, axis=0)
-    lines = list(np.delete(np.array(lines), delete_indices, axis=0))
-    treatments = list(np.delete(np.array(treatments), delete_indices, axis=0))
-    ds_proc = remove_ds_two_layer(ds_proc, delete_indices)
-    ds_align = remove_ds_two_layer(ds_align, delete_indices)
-
-    return cells, cell_shapes, lines, treatments, ds_proc, ds_align
-
-
 
 def remove_cell_shapes(cell_shapes, ds_align, delete_indices, num_layer):
     """ 
