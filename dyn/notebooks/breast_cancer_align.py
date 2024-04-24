@@ -156,7 +156,7 @@ def interpolate(curve, nb_points):
         pos += incr
     return interpolation
 
-k_sampling_points = 2000
+k_sampling_points = 20000
 
 ds_interp = apply_func_to_ds(
     input_ds=ds, func=lambda x: interpolate(x, k_sampling_points)
