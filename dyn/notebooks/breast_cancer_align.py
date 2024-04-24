@@ -188,7 +188,7 @@ data_folder = os.path.join(data_path, dataset_name, "aligned")
 suffix = 'projection'
 rescale = True
 rotation = True
-reparameterization = True
+reparameterization = False
 
 if rescale:
     suffix += '_rescale'
