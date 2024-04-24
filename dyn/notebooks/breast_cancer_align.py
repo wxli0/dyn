@@ -185,38 +185,27 @@ def preprocess(curve, tol=1e-10):
 
 data_folder = os.path.join(data_path, dataset_name, "aligned")
 
-suffix = 'full'
-rescale = False
+suffix = 'projection'
+rescale = True
 rotation = True
-reparameterization = False
+reparameterization = True
 
-if not rescale:
-    suffix = 'no_rescale'
+if rescale:
+    suffix += '_rescale'
 
-if not reparameterization:
-    suffix = 'no_reparameterization'
+if rotation:
+    suffix += '_rotation'
 
-if not rotation:
-    suffix = 'no_rotation'
+if reparameterization:
+    suffix += '_reparameterization'
 
-if not rotation and not reparameterization:
-    suffix = 'no_rotation_no_reparameterization'
-
-if not rotation and not rescale:
-    suffix = 'no_rotation_no_rescale'
-
-if not rescale and not reparameterization:
-    suffix = 'no_rescale_no_reparameterization'
-
-if not rotation and not rescale and not reparameterization:
-    suffix = 'no_rotation_no_rescale_no_reparameterization'
 
 
 data_folder = os.path.join(data_folder, suffix)
 
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
-BASE_CURVE = generate_circle_points(k_sampling_points)
+BASE_CURVE = generate_ellipse(k_sampling_points)
 
 def align(point, base_point, rescale, rotation, reparameterization):
     """

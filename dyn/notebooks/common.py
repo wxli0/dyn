@@ -177,6 +177,32 @@ def generate_circle_points(num_points):
     
     return points
 
+
+def generate_ellipse(n_sampling, a=10, b = 3):
+    """
+    Generate points on an ellipse centered at the origin.
+
+    Parameters:
+    - a: Semi-major axis of the ellipse.
+    - b: Semi-minor axis of the ellipse.
+    - n_sampling: Number of points to sample along the ellipse.
+
+    Returns:
+    - An array of shape (n_sampling, 2) where each row contains the x and y coordinates of a point on the ellipse.
+    """
+    # Angles at which to sample the ellipse
+    theta = np.linspace(0, 2 * np.pi, n_sampling, endpoint=False)
+    
+    # Calculate x and y coordinates
+    x = a * np.cos(theta)
+    y = b * np.sin(theta)
+    
+    # Combine x and y coordinates into a single array
+    points = np.vstack((x, y)).T
+    
+    return points
+
+
 def scaled_stress(pos, pairwise_dists):
     """ 
     Calculate the scaled stress invariant to scaling using the original stress \
