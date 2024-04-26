@@ -188,7 +188,8 @@ data_folder = os.path.join(data_path, dataset_name, "aligned")
 suffix = 'projection'
 rescale = True
 rotation = True
-reparameterization = False
+reparameterization = True
+parameters = "_15_2"
 
 if rescale:
     suffix += '_rescale'
@@ -199,13 +200,14 @@ if rotation:
 if reparameterization:
     suffix += '_reparameterization'
 
+suffix += parameters
 
 
 data_folder = os.path.join(data_folder, suffix)
 
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
-BASE_CURVE = generate_ellipse(k_sampling_points)
+BASE_CURVE = generate_ellipse(k_sampling_points, a=15, b=2)
 
 def align(point, base_point, rescale, rotation, reparameterization):
     """
