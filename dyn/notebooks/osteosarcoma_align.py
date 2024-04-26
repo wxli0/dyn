@@ -163,38 +163,8 @@ def preprocess(curve, tol=1e-10):
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
 
-ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
 
-BASE_CURVE = generate_circle_points(k_sampling_points)
-
-data_folder = os.path.join(data_path, dataset_name, "aligned")
-
-suffix = 'full'
-rescale = False
-rotation = True
-reparameterization = False
-
-if not rescale:
-    suffix = 'no_rescale'
-
-if not reparameterization:
-    suffix = 'no_reparameterization'
-
-if not rotation:
-    suffix = 'no_rotation'
-
-if not rotation and not reparameterization:
-    suffix = 'no_rotation_no_reparameterization'
-
-if not rotation and not rescale:
-    suffix = 'no_rotation_no_rescale'
-
-if not rescale and not reparameterization:
-    suffix = 'no_rescale_no_reparameterization'
-
-if not rotation and not rescale and not reparameterization:
-    suffix = 'no_rotation_no_rescale_no_reparameterization'
 
 
 
@@ -231,6 +201,25 @@ def align(point, base_point, rescale, rotation, reparameterization):
         point = total_space.fiber_bundle.align(point, base_point)
     return point
 
+
+BASE_CURVE = generate_ellipse(k_sampling_points)
+
+data_folder = os.path.join(data_path, dataset_name, "aligned")
+
+suffix = 'projection'
+rescale = True
+rotation = True
+reparameterization = True
+
+if rescale:
+    suffix += '_rescale'
+
+if rotation:
+    suffix += '_rotation'
+
+if reparameterization:
+    suffix += '_reparameterization'
+
 data_folder = os.path.join(data_folder, suffix)
 
 
@@ -238,12 +227,12 @@ for treatment in TREATMENTS:
     for line in LINES:
         cells = ds_proc[treatment][line]
         for i, cell in enumerate(cells):
-            try:
-                aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
-                file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
-                np.savetxt(file_path, aligned_cell)
-            except Exception:
-                print("enter Exception")
-                pass
+            # try:
+            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
+            file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
+            np.savetxt(file_path, aligned_cell)
+            # except Exception:
+            #     print("enter Exception")
+            #     pass
 
 
