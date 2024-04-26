@@ -156,7 +156,7 @@ def interpolate(curve, nb_points):
         pos += incr
     return interpolation
 
-k_sampling_points = 20000
+k_sampling_points = 2000
 
 ds_interp = apply_func_to_ds(
     input_ds=ds, func=lambda x: interpolate(x, k_sampling_points)
@@ -246,11 +246,7 @@ def align(point, base_point, rescale, rotation, reparameterization):
 for line in LINES:
     cells = ds_proc[line]
     for i, cell in enumerate(cells):
-        try:
-            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
-            file_path = os.path.join(data_folder, f"{line}_{i}.txt")
-            np.savetxt(file_path, aligned_cell)
-        except Exception:
-            print("enter Exception")
-            pass
+        aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
+        file_path = os.path.join(data_folder, f"{line}_{i}.txt")
+        np.savetxt(file_path, aligned_cell)
 
