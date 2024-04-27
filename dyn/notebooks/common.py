@@ -264,3 +264,37 @@ def svm_5_fold_classification(X, y):
     print("Mean recalls per class across all folds:", mean_recalls)
 
     return mean_precisions, mean_recalls
+
+
+def align(point, base_point, rescale, rotation, reparameterization, k_sampling_points):
+    """
+    Align point and base_point via quotienting out translation, rescaling and reparameterization
+
+    Right now we do not quotient out rotation since
+    - Current geomstats does not support changing aligner for SRVRotationReparametrizationBundle
+    - The base curve we chose is a unit circle, so quotienting out rotation won't affect the result too much
+    """
+
+    total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points)
+   
+    
+    # Quotient out translation
+    point = total_space.projection(point)
+    base_point = total_space.projection(base_point)
+
+    # Quotient out rescaling
+    if rescale:
+        point = total_space.normalize(point)
+        base_point = total_space.normalize(base_point)
+    
+    # Quotient out rotation
+    if rotation:
+        total_space.fiber_bundle = SRVRotationBundle(total_space)
+        point = total_space.fiber_bundle.align(point, base_point)
+
+    # Quotient out reparameterization
+    if reparameterization:
+        aligner = DynamicProgrammingAligner(total_space)
+        total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=aligner)
+        point = total_space.fiber_bundle.align(point, base_point)
+    return base_point, point

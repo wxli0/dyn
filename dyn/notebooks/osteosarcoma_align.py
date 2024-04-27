@@ -165,6 +165,38 @@ ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
 
 
+def rotation_align(curve, base_curve, k_sampling_points):
+    """Align curve to base_curve to minimize the L² distance.
+
+    Returns
+    -------
+    aligned_curve : discrete curve
+    """
+    nb_sampling = len(curve)
+    distances = gs.zeros(nb_sampling)
+    base_curve = gs.array(base_curve)
+
+    # Rotation is done after projection, so the origin is removed
+    total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points-1)
+    total_space.fiber_bundle = SRVRotationBundle(total_space)
+
+    for shift in range(nb_sampling):
+        reparametrized = [curve[(i + shift) % nb_sampling] for i in range(nb_sampling)]
+        print(len(reparametrized), len(base_curve))
+        aligned = total_space.fiber_bundle.align(
+            point=gs.array(reparametrized), base_point=base_curve
+        )
+        distances[shift] = np.linalg.norm(
+            gs.array(aligned) - gs.array(base_curve)
+        )
+    shift_min = gs.argmin(distances)
+    reparametrized_min = [
+        curve[(i + shift_min) % nb_sampling] for i in range(nb_sampling)
+    ]
+    aligned_curve = total_space.fiber_bundle.align(
+        point=gs.array(reparametrized_min), base_point=base_curve
+    )
+    return aligned_curve
 
 
 
@@ -191,8 +223,7 @@ def align(point, base_point, rescale, rotation, reparameterization):
     
     # Quotient out rotation
     if rotation:
-        total_space.fiber_bundle = SRVRotationBundle(total_space)
-        point = total_space.fiber_bundle.align(point, base_point)
+        point = rotation_align(point, base_point, k_sampling_points)
 
     # Quotient out reparameterization
     if reparameterization:
@@ -209,7 +240,8 @@ data_folder = os.path.join(data_path, dataset_name, "aligned")
 suffix = 'projection'
 rescale = True
 rotation = True
-reparameterization = True
+reparameterization = False
+add_suffix = 'rotation_align'
 
 if rescale:
     suffix += '_rescale'
@@ -219,6 +251,9 @@ if rotation:
 
 if reparameterization:
     suffix += '_reparameterization'
+
+if add_suffix is not None:
+    suffix += "_"+add_suffix
 
 data_folder = os.path.join(data_folder, suffix)
 
@@ -231,8 +266,6 @@ for treatment in TREATMENTS:
             aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
             file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
             np.savetxt(file_path, aligned_cell)
-            # except Exception:
-            #     print("enter Exception")
-            #     pass
+
 
 
