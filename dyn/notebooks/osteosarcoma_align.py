@@ -182,7 +182,6 @@ def rotation_align(curve, base_curve, k_sampling_points):
 
     for shift in range(nb_sampling):
         reparametrized = [curve[(i + shift) % nb_sampling] for i in range(nb_sampling)]
-        print(len(reparametrized), len(base_curve))
         aligned = total_space.fiber_bundle.align(
             point=gs.array(reparametrized), base_point=base_curve
         )
@@ -262,10 +261,35 @@ for treatment in TREATMENTS:
     for line in LINES:
         cells = ds_proc[treatment][line]
         for i, cell in enumerate(cells):
-            # try:
-            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
-            file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
-            np.savetxt(file_path, aligned_cell)
+            try:
+                file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
+                aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
+                np.savetxt(file_path, aligned_cell)
+            except:
+                print(f"{treatment}, {line}, {i} cannot be aligned")
 
 
-
+# Results
+# control, dlm8, 51 cannot be aligned
+# control, dunn, 8 cannot be aligned
+# control, dunn, 38 cannot be aligned
+# control, dunn, 80 cannot be aligned
+# control, dunn, 196 cannot be aligned
+# control, dunn, 197 cannot be aligned
+# cytd, dlm8, 4 cannot be aligned
+# cytd, dlm8, 6 cannot be aligned
+# cytd, dlm8, 30 cannot be aligned
+# cytd, dlm8, 46 cannot be aligned
+# cytd, dlm8, 69 cannot be aligned
+# cytd, dlm8, 81 cannot be aligned
+# cytd, dunn, 27 cannot be aligned
+# jasp, dlm8, 9 cannot be aligned
+# jasp, dlm8, 10 cannot be aligned
+# jasp, dlm8, 20 cannot be aligned
+# jasp, dlm8, 26 cannot be aligned
+# jasp, dlm8, 28 cannot be aligned
+# jasp, dlm8, 41 cannot be aligned
+# jasp, dunn, 8 cannot be aligned
+# jasp, dunn, 12 cannot be aligned
+# jasp, dunn, 85 cannot be aligned
+# jasp, dunn, 90 cannot be aligned
