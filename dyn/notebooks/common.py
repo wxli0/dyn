@@ -287,8 +287,15 @@ def align(point, base_point, rescale, rotation, reparameterization, k_sampling_p
         point = total_space.normalize(point)
         base_point = total_space.normalize(base_point)
     
+    # Find the optimal starting point
+        
+    # Quotient out reparameterization
+    
+    # Quotient out rotation
+    
     # Quotient out rotation
     if rotation:
+        
         total_space.fiber_bundle = SRVRotationBundle(total_space)
         point = total_space.fiber_bundle.align(point, base_point)
 

@@ -1,3 +1,9 @@
+""" 
+The script can be run in the following way:
+python3.11 osteosarcoma_align.py --rescale --rotation --reparameterization (each option enables True for the boolean variable)
+"""
+
+import argparse
 from decimal import Decimal
 import matplotlib.pyplot as plt
 
@@ -6,75 +12,12 @@ import numpy as np
 from nsimplices import *
 from common import *
 import scipy.stats as stats
-
-gs.random.seed(2021)
-
-
-# In[2]:
-
-
-base_path = "/home/wanxinli/dyn/dyn/"
-data_path = os.path.join(base_path, "datasets")
-
-dataset_name = 'osteosarcoma'
-figs_dir = os.path.join("/home/wanxinli/dyn/dyn/saved_figs", dataset_name)
-print(f"Will save figs to {figs_dir}")
-
-
-# # 2. Dataset Description
-
-# We study a dataset of mouse *Osteosarcoma* imaged cells [(AXCFP2019)](#References). The dataset contains two different cancer cell lines : *DLM8* and *DUNN*, respectively representing a more agressive and a less agressive cancer.  Among these cells, some have also been treated with different single drugs that perturb the cellular cytoskeleton. Overall, we can label each cell according to their cell line (*DLM8* and *DUNN*), and also if it is a *control* cell (no treatment), or has been treated with one of the following drugs : *Jasp* (jasplakinolide) and *Cytd* (cytochalasin D).
-# 
-# Each cell comes from a raw image containing a set of cells, which was thresholded to generate binarized images.
-# 
-# <td>
-#     <img src="figures/binarized_cells.png" width=400px />
-# </td>
-# 
-# After binarizing the images, contouring was used to isolate each cell, and to extract their boundaries as a counter-clockwise ordered list of 2D coordinates, which corresponds to the representation of discrete curve in Geomstats. We load these discrete curves into the notebook.
-
-# In[3]:
-
-
+from geomstats.learning.frechet_mean import FrechetMean
 import geomstats.datasets.utils as data_utils
-
-cells, lines, treatments = data_utils.load_cells()
-print(f"Total number of cells : {len(cells)}")
-
-
 import pandas as pd
 
-TREATMENTS = gs.unique(treatments)
-print(TREATMENTS)
-LINES = gs.unique(lines)
-print(LINES)
-METRICS = ['SRV', 'Linear']
 
-
-ds = {}
-
-n_cells_arr = gs.zeros((3, 2))
-
-for i, treatment in enumerate(TREATMENTS):
-    print(f"{treatment} :")
-    ds[treatment] = {}
-    for j, line in enumerate(LINES):
-        to_keep = gs.array(
-            [
-                one_treatment == treatment and one_line == line
-                for one_treatment, one_line in zip(treatments, lines)
-            ]
-        )
-        ds[treatment][line] = [
-            cell_i for cell_i, to_keep_i in zip(cells, to_keep) if to_keep_i
-        ]
-        nb = len(ds[treatment][line])
-        print(f"\t {nb} {line}")
-        n_cells_arr[i, j] = nb
-
-n_cells_df = pd.DataFrame({"dlm8": n_cells_arr[:, 0], "dunn": n_cells_arr[:, 1]})
-n_cells_df = n_cells_df.set_index(TREATMENTS)
-
+# Helper functions for alignment
 
 def apply_func_to_ds(input_ds, func):
     """Apply the input function func to the input dictionnary input_ds.
@@ -111,6 +54,7 @@ def apply_func_to_ds(input_ds, func):
 
 def interpolate(curve, nb_points):
     """Interpolate a discrete curve with nb_points from a discrete curve.
+    TODO: does not handle the last point nicely
 
     Returns
     -------
@@ -129,19 +73,6 @@ def interpolate(curve, nb_points):
     return interpolation
 
 
-k_sampling_points = 2000
-
-
-cell_rand = cells[gs.random.randint(len(cells))]
-cell_interpolation = interpolate(cell_rand, k_sampling_points)
-
-
-ds_interp = apply_func_to_ds(
-    input_ds=ds, func=lambda x: interpolate(x, k_sampling_points)
-)
-
-import numpy as np
-
 def preprocess(curve, tol=1e-10):
     """Preprocess curve to ensure that there are no consecutive duplicate points.
 
@@ -159,10 +90,6 @@ def preprocess(curve, tol=1e-10):
                 curve[i+1] = (curve[i] + curve[i+2]) / 2
 
     return curve
-
-ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
-
-
 
 
 def rotation_align(curve, base_curve, k_sampling_points):
@@ -198,7 +125,6 @@ def rotation_align(curve, base_curve, k_sampling_points):
     return aligned_curve
 
 
-
 def align(point, base_point, rescale, rotation, reparameterization):
     """
     Align point and base_point via quotienting out translation, rescaling and reparameterization
@@ -211,13 +137,16 @@ def align(point, base_point, rescale, rotation, reparameterization):
     total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points)
    
     
-    # Quotient out translation
-    point = total_space.projection(point)
+    # Quotient out translation 
+    point = total_space.projection(point) 
+    point = point - gs.mean(point, axis=0)
+
     base_point = total_space.projection(base_point)
+    base_point = base_point - gs.mean(base_point, axis=0)
 
     # Quotient out rescaling
     if rescale:
-        point = total_space.normalize(point)
+        point = total_space.normalize(point) 
         base_point = total_space.normalize(base_point)
     
     # Quotient out rotation
@@ -232,15 +161,127 @@ def align(point, base_point, rescale, rotation, reparameterization):
     return point
 
 
+def check_duplicate(cell):
+    """ 
+    Return true if there are duplicate points in the cell
+    """
+    for i in range(cell.shape[0]-1):
+        cur_coord = cell[i]
+        next_coord = cell[i+1]
+        if np.linalg.norm(cur_coord-next_coord) == 0:
+            return True
+        
+    # Checking the last point vs the first poit
+    if np.linalg.norm(cell[-1]-cell[0]) == 0:
+        return True
+    
+    return False
+
+
+def parse_args():
+    """ 
+    Parse arguments from command line
+    """
+    global rescale, rotation, reparameterization
+    
+    parser = argparse.ArgumentParser(description="Script to handle command line arguments.")
+    parser.add_argument('--rescale', action='store_true', help="Set this flag to enable rescaling.")
+    parser.add_argument('--rotation', action='store_true', help="Set this flag to enable rotation.")
+    parser.add_argument('--reparameterization', action='store_true', help="Set this flag to enable reparameterization.")
+
+    
+    args = parser.parse_args()
+
+    if args.rescale:
+        rescale = True
+    else:
+        rescale = False
+
+    if args.rotation:
+        rotation = True
+    else:
+        rotation = False
+
+    if args.reparameterization:
+        reparameterization = True
+    else:
+        reparameterization = False
+    
+    print(f"rescale is: {rescale}, rotation is: {rotation}, reparameterization is: {reparameterization}")
+
+
+# Procedure for aligning the cells 
+
+# (1) Set up global variables 
+base_path = "/home/wanxinli/dyn/dyn/"
+data_path = os.path.join(base_path, "datasets")
+
+dataset_name = 'osteosarcoma'
+figs_dir = os.path.join("/home/wanxinli/dyn/dyn/saved_figs", dataset_name)
+print(f"Will save figs to {figs_dir}")
+
+
+# (2) Load data 
+cells, lines, treatments = data_utils.load_cells()
+print(f"Total number of cells : {len(cells)}")
+
+TREATMENTS = gs.unique(treatments)
+print(TREATMENTS)
+LINES = gs.unique(lines)
+print(LINES)
+METRICS = ['SRV', 'Linear']
+
+
+# (3) Prepare ds_proc
+ds = {}
+
+n_cells_arr = gs.zeros((3, 2))
+
+for i, treatment in enumerate(TREATMENTS):
+    print(f"{treatment} :")
+    ds[treatment] = {}
+    for j, line in enumerate(LINES):
+        to_keep = gs.array(
+            [
+                one_treatment == treatment and one_line == line
+                for one_treatment, one_line in zip(treatments, lines)
+            ]
+        )
+        ds[treatment][line] = [
+            cell_i for cell_i, to_keep_i in zip(cells, to_keep) if to_keep_i
+        ]
+        nb = len(ds[treatment][line])
+        print(f"\t {nb} {line}")
+        n_cells_arr[i, j] = nb
+
+n_cells_df = pd.DataFrame({"dlm8": n_cells_arr[:, 0], "dunn": n_cells_arr[:, 1]})
+n_cells_df = n_cells_df.set_index(TREATMENTS)
+
+
+k_sampling_points = 2000
+
+
+cell_rand = cells[gs.random.randint(len(cells))]
+cell_interpolation = interpolate(cell_rand, k_sampling_points)
+
+
+ds_interp = apply_func_to_ds(
+    input_ds=ds, func=lambda x: interpolate(x, k_sampling_points)
+)
+
+ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
+
+
 BASE_CURVE = generate_ellipse(k_sampling_points)
 
 data_folder = os.path.join(data_path, dataset_name, "aligned")
 
+
+# (4) Parse command line arguments and start alignment for the first round
 suffix = 'projection'
-rescale = True
-rotation = True
-reparameterization = False
-add_suffix = 'rotation_align'
+parse_args()
+
+add_suffix = 'first_round'
 
 if rescale:
     suffix += '_rescale'
@@ -256,22 +297,24 @@ if add_suffix is not None:
 
 data_folder = os.path.join(data_folder, suffix)
 
+# If the first round has been done, we can comment the code below to jump to step (6)
 
+# Comment starts 
+
+aligned_cells = []
 for treatment in TREATMENTS:
     for line in LINES:
         cells = ds_proc[treatment][line]
         for i, cell in enumerate(cells):
             try:
                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
-                if os.path.exists(file_path):
-                    continue
                 aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
                 np.savetxt(file_path, aligned_cell)
+                aligned_cells.append(aligned_cell)
             except:
-                print(f"{treatment}, {line}, {i} cannot be aligned")
+                print(f"first round: {treatment}, {line}, {i} cannot be aligned")
 
-
-# Results
+# Alignment results:
 # control, dlm8, 51 cannot be aligned
 # control, dunn, 8 cannot be aligned
 # control, dunn, 38 cannot be aligned
@@ -294,4 +337,61 @@ for treatment in TREATMENTS:
 # jasp, dunn, 8 cannot be aligned
 # jasp, dunn, 12 cannot be aligned
 # jasp, dunn, 85 cannot be aligned
+# jasp, dunn, 90 cannot be aligned
+
+
+# (5) Calculate the mean shape and set it as the reference curve 
+BASE_CURVE =  gs.mean(aligned_cells, axis=0)
+reference_path = os.path.join(data_folder, f"reference.txt")
+np.savetxt(reference_path, BASE_CURVE)
+
+# Comment ends 
+
+# (6) Set up variables and start alignment for the second round, \
+# with the mean from the first round as the reference curve
+
+reference_path = os.path.join(data_folder, f"reference.txt")
+
+suffix = 'projection'
+
+add_suffix = None
+
+if rescale:
+    suffix += '_rescale'
+
+if rotation:
+    suffix += '_rotation'
+
+if reparameterization:
+    suffix += '_reparameterization'
+
+if add_suffix is not None:
+    suffix += "_"+add_suffix
+
+data_folder = os.path.join(data_path, dataset_name, "aligned")
+data_folder = os.path.join(data_folder, suffix)
+print("data_folder for the second round is:", data_folder)
+
+BASE_CURVE = np.loadtxt(reference_path)
+print("BASE_CURVE shape is:", BASE_CURVE.shape)
+
+for treatment in TREATMENTS:
+    for line in LINES:
+        cells = ds_proc[treatment][line]
+        for i, cell in enumerate(cells):
+            try:
+                file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
+                aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
+                np.savetxt(file_path, aligned_cell)
+            except:
+                print(f"second round: {treatment}, {line}, {i} cannot be aligned")
+
+
+# Alignment results
+# control, dunn, 196 cannot be aligned
+# cytd, dlm8, 4 cannot be aligned
+# cytd, dlm8, 69 cannot be aligned
+# jasp, dlm8, 41 cannot be aligned
+# jasp, dunn, 8 cannot be aligned
+# jasp, dunn, 12 cannot be aligned
 # jasp, dunn, 90 cannot be aligned
