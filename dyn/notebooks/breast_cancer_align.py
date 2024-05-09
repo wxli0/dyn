@@ -264,7 +264,7 @@ for line in LINES:
     cells = ds_proc[line]
     for i, cell in enumerate(cells):
         try:
-            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
+            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization, k_sampling_points)
             file_path = os.path.join(data_folder, f"{line}_{i}.txt")
             np.savetxt(file_path, aligned_cell)
             aligned_cells.append(aligned_cell)
@@ -300,7 +300,7 @@ for line in LINES:
     cells = ds_proc[line]
     for i, cell in enumerate(cells):
         try:
-            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
+            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization, k_sampling_points)
             file_path = os.path.join(data_folder, f"{line}_{i}.txt")
             np.savetxt(file_path, aligned_cell)
         except:
