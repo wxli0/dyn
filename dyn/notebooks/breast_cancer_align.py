@@ -1,25 +1,24 @@
+""" 
+The script can be run in the following way:
+python3.11 breast_cancer_align.py --rescale --rotation --reparameterization (each option enables True for the boolean variable)
+"""
+
+import argparse
 from decimal import Decimal
 import matplotlib.pyplot as plt
-import numpy as np
-import os
+
 import geomstats.backend as gs
-from scipy.integrate import simpson
+import numpy as np
 from nsimplices import *
 from common import *
-from scipy.stats import wasserstein_distance
 import scipy.stats as stats
-
-gs.random.seed(2021)
-
-
-base_path = "/home/wanxinli/dyn/dyn/"
-data_path = os.path.join(base_path, "datasets")
-
-dataset_name = 'breast_cancer'
-figs_dir = os.path.join("/home/wanxinli/dyn/dyn/saved_figs", dataset_name)
-print(f"Will save figs to {figs_dir}")
+from geomstats.learning.frechet_mean import FrechetMean
+import geomstats.datasets.utils as data_utils
+import pandas as pd
 
 
+
+# Helper functions for alignment
 def load_breast_cancer_cells():
     """Load dataset of mutated retinal cells.
 
@@ -63,47 +62,6 @@ def load_breast_cancer_cells():
     cells = cells[:-1]
     lines = lines[:-1]
     return cells, lines
-
-
-cells, lines = load_breast_cancer_cells()
-print(f"Total number of cells : {len(cells)}")
-
-
-
-import pandas as pd
-
-LINES = gs.unique(lines)
-print(LINES)
-METRICS = ['SRV', 'Linear']
-
-
-cell_idx = 1
-plt.plot(cells[cell_idx][:, 0], cells[cell_idx][:, 1], "blue")
-plt.plot(cells[cell_idx][0, 0], cells[cell_idx][0, 1], "blue", marker="o");
-
-
-ds = {}
-
-n_cells_arr = gs.zeros(3)
-
-
-for j, line in enumerate(LINES):
-    to_keep = gs.array(
-        [
-            one_line == line
-            for one_line in lines
-        ]
-    )
-    ds[line] = [
-        cell_i for cell_i, to_keep_i in zip(cells, to_keep) if to_keep_i
-    ]
-    nb = len(ds[line])
-    print(f"{line}: {nb}")
-    n_cells_arr[j] = nb
-
-
-print({'MCF10A': n_cells_arr[0], 'MCF7': n_cells_arr[1], 'MDA_MB_231': n_cells_arr[2]})
-n_cells_df = pd.DataFrame({'MCF10A': [n_cells_arr[0]], 'MCF7': [n_cells_arr[1]], 'MDA_MB_231': [n_cells_arr[2]]})
 
 
 def apply_func_to_ds(input_ds, func):
@@ -156,12 +114,6 @@ def interpolate(curve, nb_points):
         pos += incr
     return interpolation
 
-k_sampling_points = 2000
-
-ds_interp = apply_func_to_ds(
-    input_ds=ds, func=lambda x: interpolate(x, k_sampling_points)
-)
-
 
 
 def preprocess(curve, tol=1e-10):
@@ -183,70 +135,173 @@ def preprocess(curve, tol=1e-10):
     return curve
 
 
-data_folder = os.path.join(data_path, dataset_name, "aligned")
+def parse_args():
+    """ 
+    Parse arguments from command line
+    """
+    global rescale, rotation, reparameterization
+    
+    parser = argparse.ArgumentParser(description="Script to handle command line arguments.")
+    parser.add_argument('--rescale', action='store_true', help="Set this flag to enable rescaling.")
+    parser.add_argument('--rotation', action='store_true', help="Set this flag to enable rotation.")
+    parser.add_argument('--reparameterization', action='store_true', help="Set this flag to enable reparameterization.")
 
-suffix = 'projection'
-rescale = True
-rotation = True
-reparameterization = True
-parameters = "_15_2"
+    
+    args = parser.parse_args()
 
-if rescale:
-    suffix += '_rescale'
+    if args.rescale:
+        rescale = True
+    else:
+        rescale = False
 
-if rotation:
-    suffix += '_rotation'
+    if args.rotation:
+        rotation = True
+    else:
+        rotation = False
 
-if reparameterization:
-    suffix += '_reparameterization'
+    if args.reparameterization:
+        reparameterization = True
+    else:
+        reparameterization = False
+    
+    print(f"rescale is: {rescale}, rotation is: {rotation}, reparameterization is: {reparameterization}")
 
-suffix += parameters
+
+def get_full_suffix(add_suffix = None):
+    """ 
+    Get the name of the data folder given rescale, rotation \
+        and reparameterization, add_suffix variable
+    """
+    
+    suffix = 'projection'
+
+    if rescale:
+        suffix += '_rescale'
+
+    if rotation:
+        suffix += '_rotation'
+
+    if reparameterization:
+        suffix += '_reparameterization'
+
+    if add_suffix is not None:
+        suffix += "_"+add_suffix
+    
+    return suffix
 
 
-data_folder = os.path.join(data_folder, suffix)
+# Procedure for aligning the cells 
+
+# (1) Set up global variables 
+base_path = "/home/wanxinli/dyn/dyn/"
+data_path = os.path.join(base_path, "datasets")
+
+dataset_name = 'breast_cancer'
+figs_dir = os.path.join("/home/wanxinli/dyn/dyn/saved_figs", dataset_name)
+print(f"Will save figs to {figs_dir}")
+
+
+# (2) Load data 
+cells, lines = load_breast_cancer_cells()
+print(f"Total number of cells : {len(cells)}")
+
+LINES = gs.unique(lines)
+print(LINES)
+METRICS = ['SRV', 'Linear']
+
+
+# (3) Prepare ds_proc
+ds = {}
+
+n_cells_arr = gs.zeros(3)
+
+
+for j, line in enumerate(LINES):
+    to_keep = gs.array(
+        [
+            one_line == line
+            for one_line in lines
+        ]
+    )
+    ds[line] = [
+        cell_i for cell_i, to_keep_i in zip(cells, to_keep) if to_keep_i
+    ]
+    nb = len(ds[line])
+    print(f"{line}: {nb}")
+    n_cells_arr[j] = nb
+
+
+print({'MCF10A': n_cells_arr[0], 'MCF7': n_cells_arr[1], 'MDA_MB_231': n_cells_arr[2]})
+n_cells_df = pd.DataFrame({'MCF10A': [n_cells_arr[0]], 'MCF7': [n_cells_arr[1]], 'MDA_MB_231': [n_cells_arr[2]]})
+
+k_sampling_points = 2000
+
+ds_interp = apply_func_to_ds(
+    input_ds=ds, func=lambda x: interpolate(x, k_sampling_points)
+)
 
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
-BASE_CURVE = generate_ellipse(k_sampling_points, a=15, b=2)
 
-def align(point, base_point, rescale, rotation, reparameterization):
-    """
-    Align point and base_point via quotienting out translation, rescaling and reparameterization
+# (4) Parse command line arguments and start alignment for the first round
 
-    Right now we do not quotient out rotation since
-    - Current geomstats does not support changing aligner for SRVRotationReparametrizationBundle
-    - The base curve we chose is a unit circle, so quotienting out rotation won't affect the result too much
-    """
+BASE_CURVE = generate_ellipse(k_sampling_points)
+data_folder = os.path.join(data_path, dataset_name, "aligned")
+suffix = 'projection'
+parse_args()
 
-    total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points)
-   
-    
-    # Quotient out translation
-    point = total_space.projection(point)
-    base_point = total_space.projection(base_point)
+suffix = get_full_suffix("first_round")
 
-    # Quotient out rescaling
-    if rescale:
-        point = total_space.normalize(point)
-        base_point = total_space.normalize(base_point)
-    
-    # Quotient out rotation
-    if rotation:
-        total_space.fiber_bundle = SRVRotationBundle(total_space)
-        point = total_space.fiber_bundle.align(point, base_point)
+data_folder = os.path.join(data_folder, suffix)
+print("data_folder for the first round is:", data_folder)
 
-    # Quotient out reparameterization
-    if reparameterization:
-        aligner = DynamicProgrammingAligner(total_space)
-        total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=aligner)
-        point = total_space.fiber_bundle.align(point, base_point)
-    return point
+# If the first round has been done, we can comment the code below to jump to step (6)
 
+# Comment starts 
+
+aligned_cells = []
+for line in LINES:
+    cells = ds_proc[line]
+    for i, cell in enumerate(cells):
+        try:
+            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
+            file_path = os.path.join(data_folder, f"{line}_{i}.txt")
+            np.savetxt(file_path, aligned_cell)
+            aligned_cells.append(aligned_cell)
+        except:
+                print(f"first round: {line}, {i} cannot be aligned")
+
+# First round alignment results
+
+
+# (5) Calculate the mean shape and set it as the reference curve 
+BASE_CURVE =  gs.mean(aligned_cells, axis=0)
+reference_path = os.path.join(data_folder, f"reference.txt")
+np.savetxt(reference_path, BASE_CURVE)
+
+# Comment ends 
+
+
+# (6) Set up variables and start alignment for the second round, \
+# with the mean from the first round as the reference curve
+
+reference_path = os.path.join(data_folder, f"reference.txt")
+
+suffix = get_full_suffix()
+
+data_folder = os.path.join(data_path, dataset_name, "aligned")
+data_folder = os.path.join(data_folder, suffix)
+print("data_folder for the second round is:", data_folder)
+
+BASE_CURVE = np.loadtxt(reference_path)
+print("BASE_CURVE shape is:", BASE_CURVE.shape)
 
 for line in LINES:
     cells = ds_proc[line]
     for i, cell in enumerate(cells):
-        aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
-        file_path = os.path.join(data_folder, f"{line}_{i}.txt")
-        np.savetxt(file_path, aligned_cell)
-
+        try:
+            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
+            file_path = os.path.join(data_folder, f"{line}_{i}.txt")
+            np.savetxt(file_path, aligned_cell)
+        except:
+                print(f"second round: {line}, {i} cannot be aligned")

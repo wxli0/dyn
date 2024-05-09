@@ -92,75 +92,6 @@ def preprocess(curve, tol=1e-10):
     return curve
 
 
-def rotation_align(curve, base_curve, k_sampling_points):
-    """Align curve to base_curve to minimize the L² distance.
-
-    Returns
-    -------
-    aligned_curve : discrete curve
-    """
-    nb_sampling = len(curve)
-    distances = gs.zeros(nb_sampling)
-    base_curve = gs.array(base_curve)
-
-    # Rotation is done after projection, so the origin is removed
-    total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points-1)
-    total_space.fiber_bundle = SRVRotationBundle(total_space)
-
-    for shift in range(nb_sampling):
-        reparametrized = [curve[(i + shift) % nb_sampling] for i in range(nb_sampling)]
-        aligned = total_space.fiber_bundle.align(
-            point=gs.array(reparametrized), base_point=base_curve
-        )
-        distances[shift] = np.linalg.norm(
-            gs.array(aligned) - gs.array(base_curve)
-        )
-    shift_min = gs.argmin(distances)
-    reparametrized_min = [
-        curve[(i + shift_min) % nb_sampling] for i in range(nb_sampling)
-    ]
-    aligned_curve = total_space.fiber_bundle.align(
-        point=gs.array(reparametrized_min), base_point=base_curve
-    )
-    return aligned_curve
-
-
-def align(point, base_point, rescale, rotation, reparameterization):
-    """
-    Align point and base_point via quotienting out translation, rescaling and reparameterization
-
-    Right now we do not quotient out rotation since
-    - Current geomstats does not support changing aligner for SRVRotationReparametrizationBundle
-    - The base curve we chose is a unit circle, so quotienting out rotation won't affect the result too much
-    """
-
-    total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points)
-   
-    
-    # Quotient out translation 
-    point = total_space.projection(point) 
-    point = point - gs.mean(point, axis=0)
-
-    base_point = total_space.projection(base_point)
-    base_point = base_point - gs.mean(base_point, axis=0)
-
-    # Quotient out rescaling
-    if rescale:
-        point = total_space.normalize(point) 
-        base_point = total_space.normalize(base_point)
-    
-    # Quotient out rotation
-    if rotation:
-        point = rotation_align(point, base_point, k_sampling_points)
-
-    # Quotient out reparameterization
-    if reparameterization:
-        aligner = DynamicProgrammingAligner(total_space)
-        total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=aligner)
-        point = total_space.fiber_bundle.align(point, base_point)
-    return point
-
-
 def check_duplicate(cell):
     """ 
     Return true if there are duplicate points in the cell
@@ -208,6 +139,29 @@ def parse_args():
         reparameterization = False
     
     print(f"rescale is: {rescale}, rotation is: {rotation}, reparameterization is: {reparameterization}")
+
+
+def get_full_suffix(add_suffix = None):
+    """ 
+    Get the name of the data folder given rescale, rotation \
+        and reparameterization, add_suffix variable
+    """
+    
+    suffix = 'projection'
+
+    if rescale:
+        suffix += '_rescale'
+
+    if rotation:
+        suffix += '_rotation'
+
+    if reparameterization:
+        suffix += '_reparameterization'
+
+    if add_suffix is not None:
+        suffix += "_"+add_suffix
+    
+    return suffix
 
 
 # Procedure for aligning the cells 
@@ -272,30 +226,15 @@ ds_interp = apply_func_to_ds(
 ds_proc = apply_func_to_ds(ds_interp, func=lambda x: preprocess(x))
 
 
-BASE_CURVE = generate_ellipse(k_sampling_points)
-
-data_folder = os.path.join(data_path, dataset_name, "aligned")
-
-
 # (4) Parse command line arguments and start alignment for the first round
-suffix = 'projection'
+BASE_CURVE = generate_ellipse(k_sampling_points)
+data_folder = os.path.join(data_path, dataset_name, "aligned")
 parse_args()
 
-add_suffix = 'first_round'
-
-if rescale:
-    suffix += '_rescale'
-
-if rotation:
-    suffix += '_rotation'
-
-if reparameterization:
-    suffix += '_reparameterization'
-
-if add_suffix is not None:
-    suffix += "_"+add_suffix
+suffix = get_full_suffix("first_round")
 
 data_folder = os.path.join(data_folder, suffix)
+print("data_folder for the first round is:", data_folder)
 
 # If the first round has been done, we can comment the code below to jump to step (6)
 
@@ -314,7 +253,7 @@ for treatment in TREATMENTS:
             except:
                 print(f"first round: {treatment}, {line}, {i} cannot be aligned")
 
-# Alignment results:
+# # First round alignment results:
 # control, dlm8, 51 cannot be aligned
 # control, dunn, 8 cannot be aligned
 # control, dunn, 38 cannot be aligned
@@ -352,21 +291,7 @@ np.savetxt(reference_path, BASE_CURVE)
 
 reference_path = os.path.join(data_folder, f"reference.txt")
 
-suffix = 'projection'
-
-add_suffix = None
-
-if rescale:
-    suffix += '_rescale'
-
-if rotation:
-    suffix += '_rotation'
-
-if reparameterization:
-    suffix += '_reparameterization'
-
-if add_suffix is not None:
-    suffix += "_"+add_suffix
+suffix = get_full_suffix()
 
 data_folder = os.path.join(data_path, dataset_name, "aligned")
 data_folder = os.path.join(data_folder, suffix)
@@ -387,7 +312,7 @@ for treatment in TREATMENTS:
                 print(f"second round: {treatment}, {line}, {i} cannot be aligned")
 
 
-# Alignment results
+# Second round alignment results
 # second round: control, dlm8, 51 cannot be aligned
 # second round: control, dunn, 8 cannot be aligned
 # second round: control, dunn, 38 cannot be aligned

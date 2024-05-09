@@ -1,3 +1,4 @@
+import geomstats.backend as gs
 import numpy as np 
 from numba import jit, njit, prange
 import scipy.stats as stats
@@ -266,42 +267,67 @@ def svm_5_fold_classification(X, y):
     return mean_precisions, mean_recalls
 
 
+def rotation_align(curve, base_curve, k_sampling_points):
+    """Align curve to base_curve to minimize the L² distance by \
+        trying different start points.
+
+    Returns
+    -------
+    aligned_curve : discrete curve
+    """
+    nb_sampling = len(curve)
+    distances = gs.zeros(nb_sampling)
+    base_curve = gs.array(base_curve)
+
+    # Rotation is done after projection, so the origin is removed
+    total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points-1)
+    total_space.fiber_bundle = SRVRotationBundle(total_space)
+
+    for shift in range(nb_sampling):
+        reparametrized = [curve[(i + shift) % nb_sampling] for i in range(nb_sampling)]
+        aligned = total_space.fiber_bundle.align(
+            point=gs.array(reparametrized), base_point=base_curve
+        )
+        distances[shift] = np.linalg.norm(
+            gs.array(aligned) - gs.array(base_curve)
+        )
+    shift_min = gs.argmin(distances)
+    reparametrized_min = [
+        curve[(i + shift_min) % nb_sampling] for i in range(nb_sampling)
+    ]
+    aligned_curve = total_space.fiber_bundle.align(
+        point=gs.array(reparametrized_min), base_point=base_curve
+    )
+    return aligned_curve
+
+
 def align(point, base_point, rescale, rotation, reparameterization, k_sampling_points):
     """
-    Align point and base_point via quotienting out translation, rescaling and reparameterization
-
-    Right now we do not quotient out rotation since
-    - Current geomstats does not support changing aligner for SRVRotationReparametrizationBundle
-    - The base curve we chose is a unit circle, so quotienting out rotation won't affect the result too much
+    Align point and base_point via quotienting out translation, rescaling, rotation and reparameterization
     """
 
     total_space = DiscreteCurvesStartingAtOrigin(k_sampling_points=k_sampling_points)
    
     
-    # Quotient out translation
-    point = total_space.projection(point)
+    # Quotient out translation 
+    point = total_space.projection(point) 
+    point = point - gs.mean(point, axis=0)
+
     base_point = total_space.projection(base_point)
+    base_point = base_point - gs.mean(base_point, axis=0)
 
     # Quotient out rescaling
     if rescale:
-        point = total_space.normalize(point)
+        point = total_space.normalize(point) 
         base_point = total_space.normalize(base_point)
-    
-    # Find the optimal starting point
-        
-    # Quotient out reparameterization
-    
-    # Quotient out rotation
     
     # Quotient out rotation
     if rotation:
-        
-        total_space.fiber_bundle = SRVRotationBundle(total_space)
-        point = total_space.fiber_bundle.align(point, base_point)
+        point = rotation_align(point, base_point, k_sampling_points)
 
     # Quotient out reparameterization
     if reparameterization:
         aligner = DynamicProgrammingAligner(total_space)
         total_space.fiber_bundle = SRVReparametrizationBundle(total_space, aligner=aligner)
         point = total_space.fiber_bundle.align(point, base_point)
-    return base_point, point
+    return point
