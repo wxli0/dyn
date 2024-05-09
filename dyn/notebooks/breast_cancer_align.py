@@ -259,25 +259,25 @@ print("data_folder for the first round is:", data_folder)
 
 # Comment starts 
 
-aligned_cells = []
-for line in LINES:
-    cells = ds_proc[line]
-    for i, cell in enumerate(cells):
-        try:
-            aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization, k_sampling_points)
-            file_path = os.path.join(data_folder, f"{line}_{i}.txt")
-            np.savetxt(file_path, aligned_cell)
-            aligned_cells.append(aligned_cell)
-        except:
-                print(f"first round: {line}, {i} cannot be aligned")
+# aligned_cells = []
+# for line in LINES:
+#     cells = ds_proc[line]
+#     for i, cell in enumerate(cells):
+#         try:
+#             aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization, k_sampling_points)
+#             file_path = os.path.join(data_folder, f"{line}_{i}.txt")
+#             np.savetxt(file_path, aligned_cell)
+#             aligned_cells.append(aligned_cell)
+#         except:
+#                 print(f"first round: {line}, {i} cannot be aligned")
 
-# First round alignment results
+# # First round alignment results
 
 
-# (5) Calculate the mean shape and set it as the reference curve 
-BASE_CURVE =  gs.mean(aligned_cells, axis=0)
-reference_path = os.path.join(data_folder, f"reference.txt")
-np.savetxt(reference_path, BASE_CURVE)
+# # (5) Calculate the mean shape and set it as the reference curve 
+# BASE_CURVE =  gs.mean(aligned_cells, axis=0)
+# reference_path = os.path.join(data_folder, f"reference.txt")
+# np.savetxt(reference_path, BASE_CURVE)
 
 # Comment ends 
 
@@ -299,10 +299,12 @@ print("BASE_CURVE shape is:", BASE_CURVE.shape)
 for line in LINES:
     cells = ds_proc[line]
     for i, cell in enumerate(cells):
+        file_path = os.path.join(data_folder, f"{line}_{i}.txt")
+        if os.path.exists(file_path):
+            continue
         try:
             aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization, k_sampling_points)
-            file_path = os.path.join(data_folder, f"{line}_{i}.txt")
             np.savetxt(file_path, aligned_cell)
         except:
-                print(f"second round: {line}, {i} cannot be aligned")
+            print(f"second round: {line}, {i} cannot be aligned")
 
