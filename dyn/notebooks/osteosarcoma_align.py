@@ -238,53 +238,53 @@ print("data_folder for the first round is:", data_folder)
 
 # If the first round has been done, we can comment the code below to jump to step (6)
 
-# Comment starts 
+# # Comment starts 
 
-aligned_cells = []
-for treatment in TREATMENTS:
-    for line in LINES:
-        cells = ds_proc[treatment][line]
-        for i, cell in enumerate(cells):
-            try:
-                file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
-                aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
-                np.savetxt(file_path, aligned_cell)
-                aligned_cells.append(aligned_cell)
-            except:
-                print(f"first round: {treatment}, {line}, {i} cannot be aligned")
+# aligned_cells = []
+# for treatment in TREATMENTS:
+#     for line in LINES:
+#         cells = ds_proc[treatment][line]
+#         for i, cell in enumerate(cells):
+#             try:
+#                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
+#                 aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization, k_sampling_points)
+#                 np.savetxt(file_path, aligned_cell)
+#                 aligned_cells.append(aligned_cell)
+#             except:
+#                 print(f"first round: {treatment}, {line}, {i} cannot be aligned")
 
-# # First round alignment results:
-# control, dlm8, 51 cannot be aligned
-# control, dunn, 8 cannot be aligned
-# control, dunn, 38 cannot be aligned
-# control, dunn, 80 cannot be aligned
-# control, dunn, 196 cannot be aligned
-# control, dunn, 197 cannot be aligned
-# cytd, dlm8, 4 cannot be aligned
-# cytd, dlm8, 6 cannot be aligned
-# cytd, dlm8, 30 cannot be aligned
-# cytd, dlm8, 46 cannot be aligned
-# cytd, dlm8, 69 cannot be aligned
-# cytd, dlm8, 81 cannot be aligned
-# cytd, dunn, 27 cannot be aligned
-# jasp, dlm8, 9 cannot be aligned
-# jasp, dlm8, 10 cannot be aligned
-# jasp, dlm8, 20 cannot be aligned
-# jasp, dlm8, 26 cannot be aligned
-# jasp, dlm8, 28 cannot be aligned
-# jasp, dlm8, 41 cannot be aligned
-# jasp, dunn, 8 cannot be aligned
-# jasp, dunn, 12 cannot be aligned
-# jasp, dunn, 85 cannot be aligned
-# jasp, dunn, 90 cannot be aligned
+# # # First round alignment results:
+# # control, dlm8, 51 cannot be aligned
+# # control, dunn, 8 cannot be aligned
+# # control, dunn, 38 cannot be aligned
+# # control, dunn, 80 cannot be aligned
+# # control, dunn, 196 cannot be aligned
+# # control, dunn, 197 cannot be aligned
+# # cytd, dlm8, 4 cannot be aligned
+# # cytd, dlm8, 6 cannot be aligned
+# # cytd, dlm8, 30 cannot be aligned
+# # cytd, dlm8, 46 cannot be aligned
+# # cytd, dlm8, 69 cannot be aligned
+# # cytd, dlm8, 81 cannot be aligned
+# # cytd, dunn, 27 cannot be aligned
+# # jasp, dlm8, 9 cannot be aligned
+# # jasp, dlm8, 10 cannot be aligned
+# # jasp, dlm8, 20 cannot be aligned
+# # jasp, dlm8, 26 cannot be aligned
+# # jasp, dlm8, 28 cannot be aligned
+# # jasp, dlm8, 41 cannot be aligned
+# # jasp, dunn, 8 cannot be aligned
+# # jasp, dunn, 12 cannot be aligned
+# # jasp, dunn, 85 cannot be aligned
+# # jasp, dunn, 90 cannot be aligned
 
 
-# (5) Calculate the mean shape and set it as the reference curve 
-BASE_CURVE =  gs.mean(aligned_cells, axis=0)
-reference_path = os.path.join(data_folder, f"reference.txt")
-np.savetxt(reference_path, BASE_CURVE)
+# # (5) Calculate the mean shape and set it as the reference curve 
+# BASE_CURVE =  gs.mean(aligned_cells, axis=0)
+# reference_path = os.path.join(data_folder, f"reference.txt")
+# np.savetxt(reference_path, BASE_CURVE)
 
-# Comment ends 
+# # Comment ends 
 
 # (6) Set up variables and start alignment for the second round, \
 # with the mean from the first round as the reference curve
@@ -306,7 +306,7 @@ for treatment in TREATMENTS:
         for i, cell in enumerate(cells):
             try:
                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
-                aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization)
+                aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization, k_sampling_points)
                 np.savetxt(file_path, aligned_cell)
             except:
                 print(f"second round: {treatment}, {line}, {i} cannot be aligned")
