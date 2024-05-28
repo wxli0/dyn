@@ -306,6 +306,8 @@ for treatment in TREATMENTS:
         for i, cell in enumerate(cells):
             try:
                 file_path = os.path.join(data_folder, f"{treatment}_{line}_{i}.txt")
+                if os.path.exists(file_path):
+                    continue
                 aligned_cell = align(cell, BASE_CURVE, rescale, rotation, reparameterization, k_sampling_points)
                 np.savetxt(file_path, aligned_cell)
             except:
