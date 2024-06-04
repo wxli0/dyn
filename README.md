@@ -14,7 +14,9 @@ For [Geometry Information](https://link.springer.com/collections/cadahjefhd) sub
 
 To reproduce the results, we have the following notebooks, with results produced using geomstats 2.7.0.
 
-- [osteosarcoma_analysis.ipynb](https://github.com/wxli0/dyn/blob/main/dyn/notebooks/osteosarcoma_analysis.ipynb): Analysis of the osteosarcoma dataset.
+- [osteosarcoma_analysis.ipynb](https://github.com/wxli0/dyn/blob/main%4092c7a58/dyn/notebooks/osteosarcoma_analysis.ipynb): Analysis of the osteosarcoma dataset.
 
-- [breast_cancer_analysis.ipynb](https://github.com/wxli0/dyn/blob/main/dyn/notebooks/breast_cancer_analysis.ipynb): Analysis of the breast cancer dataset.
+- [osteosarcoma_analysis_no_rescale.ipynb](https://github.com/wxli0/dyn/blob/main%4092c7a58/dyn/notebooks/osteosarcoma_analysis_no_rescale.ipynb): Analysis of the osteosarcoma dataset without rescaling.
+
+- [breast_cancer_analysis.ipynb](https://github.com/wxli0/dyn/blob/main%4092c7a58/dyn/notebooks/breast_cancer_analysis.ipynb): Analysis of the breast cancer dataset.
 
