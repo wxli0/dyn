@@ -1,4 +1,11 @@
-Datasets: The aligned datasets in 2D coordinates are available at
+Datasets: 
+
+The datasets in 2D are available at:
+
+- [Osteosarcoma](https://github.com/geomstats/geomstats/tree/main/geomstats/datasets/data/cells)
+- [Breast cancer](https://github.com/wxli0/dyn/tree/main%4092c7a58/dyn/datasets/breast_cancer)
+
+The aligned datasets in 2D coordinates (each cell has 2000 coordinates) are available at
 
 - Osteosarcoma
   - [rescaled](https://github.com/wxli0/dyn/tree/main%4092c7a58/dyn/datasets/osteosarcoma/aligned/projection_rescale_rotation_reparameterization)
